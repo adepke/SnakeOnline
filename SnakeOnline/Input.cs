@@ -21,6 +21,8 @@ namespace SnakeOnline
     {
         private Snake SnakeInst;
 
+        public MovementDirection LastInput = MovementDirection.Left;
+
         public bool Initialize(Snake SnakeInst, GameWindow WindowInst)
         {
             this.SnakeInst = SnakeInst;
@@ -35,16 +37,16 @@ namespace SnakeOnline
             switch (e.KeyChar)
             {
                 case 'w':
-                    SnakeInst.Move(MovementDirection.Up);
+                    LastInput = MovementDirection.Up;
                     break;
                 case 'a':
-                    SnakeInst.Move(MovementDirection.Left);
+                    LastInput = MovementDirection.Left;
                     break;
                 case 's':
-                    SnakeInst.Move(MovementDirection.Down);
+                    LastInput = MovementDirection.Down;
                     break;
                 case 'd':
-                    SnakeInst.Move(MovementDirection.Right);
+                    LastInput = MovementDirection.Right;
                     break;
             }
         }

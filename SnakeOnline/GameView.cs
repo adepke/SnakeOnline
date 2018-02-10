@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Timers;
 using OpenTK;
 
 namespace SnakeOnline
@@ -15,6 +16,7 @@ namespace SnakeOnline
         public bool Initialize(GameWindow Window, int WorldSizeX, int WorldSizeY)
         {
             WindowInst = Window;
+
             WorldInst = new World();
 
             if (!WorldInst.Initialize(WorldSizeX, WorldSizeY))
@@ -37,6 +39,32 @@ namespace SnakeOnline
             }
 
             return true;
+        }
+
+        public void Run(double TickRate)
+        {
+            SnakeInst.Spawn(4, 2, 1);
+
+            Timer GameLoopTimer = new Timer(TickRate * 1000d);
+
+            GameLoopTimer.AutoReset = true;
+            GameLoopTimer.Elapsed += new ElapsedEventHandler(Tick);
+            GameLoopTimer.Enabled = true;
+        }
+
+        private void Tick(object Sender, ElapsedEventArgs e)
+        {
+            Console.WriteLine("{0} {1}", SnakeInst.GetHead().X, SnakeInst.GetHead().Y);
+
+            if (SnakeInst.IsAlive())
+            {
+                SnakeInst.Move(InputInst.LastInput);
+            }
+
+            else
+            {
+                Console.WriteLine("Game Over");
+            }
         }
     }
 }

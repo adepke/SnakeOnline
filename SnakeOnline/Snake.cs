@@ -21,7 +21,7 @@ namespace SnakeOnline
 
             Coords = new List<Point>();
 
-            return false;
+            return true;
         }
 
         public void Spawn(int X, int Y, int Size)
@@ -30,7 +30,7 @@ namespace SnakeOnline
             Head.X = X;
             Head.Y = Y;
 
-            Coords[0] = Head;
+            Coords.Add(Head);
 
             for (int Iter = 0; Iter < Size - 1; ++Iter)
             {
