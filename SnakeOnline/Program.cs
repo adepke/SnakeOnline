@@ -13,7 +13,7 @@ namespace SnakeOnline
             GameView LocalView = new GameView();
             if (!LocalView.Initialize(AppWindow, 5, 5))
             {
-                throw new Exception("Failed to Create Local Game View");
+                throw new Exception("Failed to Create Local Game");
             }
 
             AppWindow.Run(30.0d);
