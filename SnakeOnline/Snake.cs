@@ -29,10 +29,7 @@ namespace SnakeOnline
         {
             GrowMove(Direction);
 
-            if (Alive)
-            {
-                Coords.RemoveAt(Coords.Count - 2);
-            }
+            Coords.RemoveAt(Coords.Count - 2);
         }
 
         public void GrowMove(MovementDirection Direction)
