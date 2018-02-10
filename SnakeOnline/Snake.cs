@@ -27,6 +27,16 @@ namespace SnakeOnline
 
         public void Move(MovementDirection Direction)
         {
+            GrowMove(Direction);
+
+            if (Alive)
+            {
+                Coords.RemoveAt(Coords.Count - 2);
+            }
+        }
+
+        public void GrowMove(MovementDirection Direction)
+        {
             Point NewPosition = Coords[0];
 
             switch (Direction)
@@ -48,19 +58,12 @@ namespace SnakeOnline
             if (WorldInst.IsValidIndex(NewPosition.X, NewPosition.Y))
             {
                 Coords.Insert(0, NewPosition);
-
-                Coords.RemoveAt(Coords.Count - 2);
             }
 
             else
             {
                 Alive = false;
             }
-        }
-
-        public void GrowMove(MovementDirection Direction)
-        {
-
         }
 
         public bool IsAlive()
