@@ -24,6 +24,20 @@ namespace SnakeOnline
             return false;
         }
 
+        public void Spawn(int X, int Y, int Size)
+        {
+            Point Head;
+            Head.X = X;
+            Head.Y = Y;
+
+            Coords[0] = Head;
+
+            for (int Iter = 0; Iter < Size - 1; ++Iter)
+            {
+                GrowMove(MovementDirection.Left);
+            }
+        }
+
         public void Move(MovementDirection Direction)
         {
             GrowMove(Direction);
