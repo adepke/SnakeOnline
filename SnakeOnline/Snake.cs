@@ -12,7 +12,6 @@ namespace SnakeOnline
         private World WorldInst;
 
         public List<Point> Coords;
-        public int Size { get; set; }
 
         private bool Alive = true;
 
@@ -65,6 +64,11 @@ namespace SnakeOnline
             {
                 Alive = false;
             }
+        }
+
+        public int GetSize()
+        {
+            return Coords.Count;
         }
 
         public bool IsAlive()
