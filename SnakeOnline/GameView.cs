@@ -6,5 +6,6 @@ namespace SnakeOnline
 {
     class GameView
     {
+        public World WorldInst;
     }
 }
