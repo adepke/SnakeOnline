@@ -13,7 +13,7 @@ namespace SnakeOnline
 
         public List<Point> Coords;
 
-        private bool Alive = true;
+        private bool Alive = false;
 
         public bool Initialize(World WorldInst)
         {
@@ -34,20 +34,13 @@ namespace SnakeOnline
 
             for (int Iter = 0; Iter < Size - 1; ++Iter)
             {
-                GrowMove(MovementDirection.Left);
+                Move(MovementDirection.Left);
             }
+
+            Alive = true;
         }
 
         public void Move(MovementDirection Direction)
-        {
-            GrowMove(Direction);
-
-            Coords.RemoveAt(Coords.Count - 2);
-
-            WorldInst.Set(0, Coords[Coords.Count - 2].X, Coords[Coords.Count - 2].Y);
-        }
-
-        public void GrowMove(MovementDirection Direction)
         {
             Point NewPosition = Coords[0];
 
@@ -67,6 +60,22 @@ namespace SnakeOnline
                     break;
             }
 
+            // Hit Self
+            if ((int)WorldInst.Get(NewPosition.X, NewPosition.Y) == 1)
+            {
+                Alive = false;
+
+                return;
+            }
+
+            bool Grow = false;
+
+            // Hit an Item
+            if ((int)WorldInst.Get(NewPosition.X, NewPosition.Y) == 2)
+            {
+                Grow = true;
+            }
+
             if (WorldInst.IsValidIndex(NewPosition.X, NewPosition.Y))
             {
                 Coords.Insert(0, NewPosition);
@@ -74,10 +83,23 @@ namespace SnakeOnline
                 WorldInst.Set(1, NewPosition.X, NewPosition.Y);
             }
 
+            // Hit World Border
             else
             {
                 Alive = false;
             }
+
+            if (!Grow)
+            {
+                Coords.RemoveAt(Coords.Count - 2);
+
+                WorldInst.Set(0, Coords[Coords.Count - 2].X, Coords[Coords.Count - 2].Y);
+            }
+        }
+
+        public Point GetHead()
+        {
+            return Coords[0];
         }
 
         public int GetSize()
