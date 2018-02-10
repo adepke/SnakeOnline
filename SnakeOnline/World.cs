@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 namespace SnakeOnline
 {
+    struct Point
+    {
+        public int X, Y;
+    }
+
     class World
     {
         private int Rows;
@@ -31,7 +36,7 @@ namespace SnakeOnline
             return Columns;
         }
 
-        private bool IsValidIndex(int Row, int Column)
+        public bool IsValidIndex(int Row, int Column)
         {
             return (Row <= Rows && Column <= Columns);
         }
