@@ -54,16 +54,28 @@ namespace SnakeOnline
 
         private void Tick(object Sender, ElapsedEventArgs e)
         {
+            Console.Clear();
+
+            for (int Row = 0; Row < WorldInst.GetRows(); ++Row)
+            {
+                for (int Column = 0; Column < WorldInst.GetColumns(); ++Column)
+                {
+                    Console.Write(WorldInst.Get(Row, Column) + " ");
+                }
+
+                Console.WriteLine("");
+            }
+
+            Console.WriteLine("Head | X: {0}   Y: {1}", SnakeInst.GetHead().X, SnakeInst.GetHead().Y);
+
             if (SnakeInst.IsAlive())
             {
-                Console.WriteLine("X: {0}   Y: {1}", SnakeInst.GetHead().X, SnakeInst.GetHead().Y);
-
                 SnakeInst.Move(InputInst.LastInput);
             }
 
             else
             {
-                Console.WriteLine("Game Over");
+                Console.WriteLine("\nGame Over");
             }
         }
     }

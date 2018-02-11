@@ -11,7 +11,7 @@ namespace SnakeOnline
             GameWindow AppWindow = new GameWindow(800, 600, OpenTK.Graphics.GraphicsMode.Default, "Snake Online", 0, DisplayDevice.Default);
 
             GameView LocalView = new GameView();
-            if (!LocalView.Initialize(AppWindow, 20, 20))
+            if (!LocalView.Initialize(AppWindow, 10, 10))
             {
                 throw new Exception("Failed to Create Local Game");
             }
