@@ -6,28 +6,15 @@ using System.Threading.Tasks;
 
 namespace SnakeOnline
 {
-    class ItemSpawner
+    abstract class ItemSpawner
     {
         public static int ItemWorth = 4;
 
-        private World WorldInst;
-        private Random RandomHandler;
+        protected World WorldInst;
+        protected Random RandomHandler;
 
-        public bool Initialize(World WorldInst)
-        {
-            this.WorldInst = WorldInst;
+        public abstract bool Initialize(World WorldInst);
 
-            RandomHandler = new Random();
-
-            return true;
-        }
-
-        public void SpawnNew()
-        {
-            int Row = RandomHandler.Next(0, WorldInst.GetRows());
-            int Column = RandomHandler.Next(0, WorldInst.GetColumns());
-
-            WorldInst.Set(2, Row, Column);
-        }
+        public abstract void SpawnNew();
     }
 }

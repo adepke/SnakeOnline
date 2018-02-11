@@ -24,7 +24,7 @@ namespace SnakeOnline
                 return false;
             }
 
-            ItemSpawnerInst = new ItemSpawner();
+            ItemSpawnerInst = new LocalItemSpawner();
 
             if (!ItemSpawnerInst.Initialize(WorldInst))
             {
@@ -57,7 +57,7 @@ namespace SnakeOnline
                 return false;
             }
 
-            ItemSpawnerInst = new ItemSpawner();
+            ItemSpawnerInst = new NetworkedItemSpawner();
 
             if (!ItemSpawnerInst.Initialize(WorldInst))
             {
