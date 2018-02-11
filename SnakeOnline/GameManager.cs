@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Drawing;
 
 namespace SnakeOnline
 {
@@ -17,6 +18,9 @@ namespace SnakeOnline
         public void Initialize(AppWindow Window)
         {
             this.Window = Window;
+
+            Window.Title = "Snake Online";
+            Window.Size = new Size(100, 100);
 
             LocalView = new GameView();
         }
