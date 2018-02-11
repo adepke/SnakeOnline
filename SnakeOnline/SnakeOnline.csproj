@@ -32,6 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Gwen">
+      <HintPath>..\3rdParty\GWEN.NET\Gwen.dll</HintPath>
+    </Reference>
+    <Reference Include="Gwen.Renderer.OpenTK">
+      <HintPath>..\3rdParty\GWEN.NET\Gwen.Renderer.OpenTK.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\3rdParty\OpenTK\OpenTK.dll</HintPath>
     </Reference>
