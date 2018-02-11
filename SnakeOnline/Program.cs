@@ -17,6 +17,8 @@ namespace SnakeOnline
 
             Manager.Run(0.2d);
             Window.Run(30.0d);
+
+            Manager.Shutdown();
         }
     }
 }

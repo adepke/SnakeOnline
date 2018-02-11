@@ -53,5 +53,10 @@ namespace SnakeOnline
                 LocalView.Tick();
             }
         }
+
+        public void Shutdown()
+        {
+            Window.Dispose();
+        }
     }
 }

@@ -31,5 +31,10 @@ namespace SnakeOnline
 
             SwapBuffers();
         }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+        }
     }
 }
