@@ -18,8 +18,6 @@ namespace SnakeOnline
 
             LocalView.Run(0.2d);
             AppWindow.Run(30.0d);
-
-            Console.Read();
         }
     }
 }
