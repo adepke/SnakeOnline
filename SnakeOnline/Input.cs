@@ -16,7 +16,9 @@ namespace SnakeOnline
 
     abstract class Input
     {
-        public MovementDirection LastInput = MovementDirection.Left;
+        public static MovementDirection DefaultInput = MovementDirection.Right;
+
+        public MovementDirection LastInput = DefaultInput;
 
         public abstract bool Initialize();
         public abstract bool Initialize(AppWindow Window);

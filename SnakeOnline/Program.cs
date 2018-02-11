@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Drawing;
 
-using OpenTK;
-
 namespace SnakeOnline
 {
     class Program
@@ -13,7 +11,7 @@ namespace SnakeOnline
 
             GameManager Manager = new GameManager();
 
-            Manager.Initialize(Window, "Snake Online", new Size(100, 100));
+            Manager.Initialize(Window, "Snake Online", new Size(1, 1));
 
             Manager.Run(0.2d);
             Window.Run(30.0d);

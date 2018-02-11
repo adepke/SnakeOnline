@@ -85,7 +85,7 @@ namespace SnakeOnline
         {
             ItemSpawnerInst.SpawnNew();
 
-            SnakeInst.Spawn(15, 20, 8);
+            SnakeInst.Spawn(0, 0, 1);
         }
 
         internal void Tick()

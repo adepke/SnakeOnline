@@ -8,7 +8,7 @@ namespace SnakeOnline
 {
     abstract class ItemSpawner
     {
-        public static int ItemWorth = 4;
+        public static int ItemWorth = 3;
 
         protected World WorldInst;
 

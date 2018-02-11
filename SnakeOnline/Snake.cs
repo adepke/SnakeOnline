@@ -40,10 +40,10 @@ namespace SnakeOnline
 
             for (int Iter = 0; Iter < Size - 1; ++Iter)
             {
-                Move(MovementDirection.Left);
+                Move(Input.DefaultInput);
             }
 
-            Move(MovementDirection.Left);
+            Move(Input.DefaultInput);
 
             Alive = true;
         }
@@ -83,12 +83,14 @@ namespace SnakeOnline
                 return;
             }
 
+            bool ShouldSpawnNew = false;
+
             // Hit an Item
             if ((int)WorldInst.Get(NewPosition.Row, NewPosition.Column) == 2)
             {
                 GrowthQueue += ItemSpawner.ItemWorth;
 
-                ItemSpawnerInst.SpawnNew();
+                ShouldSpawnNew = true;
             }
 
             Coords.Insert(0, NewPosition);
@@ -107,6 +109,12 @@ namespace SnakeOnline
             else
             {
                 GrowthQueue -= 1;
+            }
+
+            // Only Spawn New Item After Snake Has Been Fully Processed.
+            if (ShouldSpawnNew)
+            {
+                ItemSpawnerInst.SpawnNew();
             }
         }
 

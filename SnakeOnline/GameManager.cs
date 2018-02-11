@@ -27,7 +27,7 @@ namespace SnakeOnline
 
         public void Run(double UpdateRate)
         {
-            if (!LocalView.Initialize(Window, 30, 40))
+            if (!LocalView.Initialize(Window, 15, 15))
             {
                 throw new Exception("Failed to Create Local Game");
             }
