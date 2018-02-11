@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="GameView.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="ItemSpawner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Snake.cs" />

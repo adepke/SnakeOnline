@@ -10,6 +10,7 @@ namespace SnakeOnline
     {
         public GameWindow WindowInst;
         public World WorldInst;
+        public ItemSpawner ItemSpawnerInst;
         public Snake SnakeInst;
         public Input InputInst;
 
@@ -26,9 +27,16 @@ namespace SnakeOnline
                 return false;
             }
 
+            ItemSpawnerInst = new ItemSpawner();
+
+            if (!ItemSpawnerInst.Initialize(WorldInst))
+            {
+                return false;
+            }
+
             SnakeInst = new Snake();
 
-            if (!SnakeInst.Initialize(WorldInst))
+            if (!SnakeInst.Initialize(WorldInst, ItemSpawnerInst))
             {
                 return false;
             }
@@ -45,6 +53,8 @@ namespace SnakeOnline
 
         public void Run(double TickRate)
         {
+            ItemSpawnerInst.SpawnNew();
+
             SnakeInst.Spawn(15, 20, 8);
 
             GameLoop = new Timer(TickRate * 1000d);

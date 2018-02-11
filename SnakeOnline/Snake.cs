@@ -10,14 +10,16 @@ namespace SnakeOnline
     class Snake
     {
         private World WorldInst;
+        private ItemSpawner ItemSpawnerInst;
 
         public List<Point> Coords;
 
         private bool Alive = false;
 
-        public bool Initialize(World WorldInst)
+        public bool Initialize(World WorldInst, ItemSpawner ItemSpawnerInst)
         {
             this.WorldInst = WorldInst;
+            this.ItemSpawnerInst = ItemSpawnerInst;
 
             Coords = new List<Point>();
 
@@ -83,6 +85,8 @@ namespace SnakeOnline
             if ((int)WorldInst.Get(NewPosition.Row, NewPosition.Column) == 2)
             {
                 Grow = true;
+
+                ItemSpawnerInst.SpawnNew();
             }
 
             Coords.Insert(0, NewPosition);
