@@ -54,10 +54,10 @@ namespace SnakeOnline
 
         private void Tick(object Sender, ElapsedEventArgs e)
         {
-            Console.WriteLine("X: {0}   Y: {1}", SnakeInst.GetHead().X, SnakeInst.GetHead().Y);
-
             if (SnakeInst.IsAlive())
             {
+                Console.WriteLine("X: {0}   Y: {1}", SnakeInst.GetHead().X, SnakeInst.GetHead().Y);
+
                 SnakeInst.Move(InputInst.LastInput);
             }
 

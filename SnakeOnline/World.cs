@@ -23,6 +23,14 @@ namespace SnakeOnline
             this.Rows = Rows;
             this.Columns = Columns;
 
+            for (int Row = 0; Row < Rows; ++Row)
+            {
+                for (int Column = 0; Column < Columns; ++Column)
+                {
+                    ItemMatrix[Row, Column] = 0;
+                }
+            }
+
             return true;
         }
 
