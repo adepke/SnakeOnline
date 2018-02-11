@@ -28,13 +28,13 @@ namespace SnakeOnline
             {
                 // Find Closet Open Cell
 
-                int Iter = 0;
+                int Iter = 1;
 
                 while (Iter != -1)
                 {
                     List<Point> Shell = SurroundingCells(Row, Column, Iter);
 
-                    // No Open Cells in the World, Don't Spawn.
+                    // No Open Cells in the World
                     if (Shell.Count == 0)
                     {
                         break;
@@ -66,6 +66,66 @@ namespace SnakeOnline
         private List<Point> SurroundingCells(int Row, int Column, int Gap)
         {
             List<Point> Result = new List<Point>();
+
+            Point TopLeft;
+            TopLeft.Row = Row - Gap;
+            TopLeft.Column = Column - Gap;
+
+            Point BottomRight;
+            BottomRight.Row = Row + Gap;
+            BottomRight.Column = Column + Gap;
+
+            // Top
+            for (int Iter = 0; Iter < BottomRight.Column - TopLeft.Column; ++Iter)
+            {
+                if (WorldInst.IsValidIndex(TopLeft.Row, TopLeft.Column + Iter))
+                {
+                    Point NewPoint;
+                    NewPoint.Row = TopLeft.Row;
+                    NewPoint.Column = TopLeft.Column + Iter;
+
+                    Result.Add(NewPoint);
+                }
+            }
+
+            // Right
+            for (int Iter = 0; Iter < BottomRight.Row - TopLeft.Row; ++Iter)
+            {
+                if (WorldInst.IsValidIndex(TopLeft.Row + Iter, BottomRight.Column))
+                {
+                    Point NewPoint;
+                    NewPoint.Row = TopLeft.Row + Iter;
+                    NewPoint.Column = BottomRight.Column;
+
+                    Result.Add(NewPoint);
+                }
+            }
+
+            // Bottom
+            for (int Iter = 0; Iter < BottomRight.Column - TopLeft.Column; ++Iter)
+            {
+                if (WorldInst.IsValidIndex(BottomRight.Row, TopLeft.Column + Iter))
+                {
+                    Point NewPoint;
+                    NewPoint.Row = BottomRight.Row;
+                    NewPoint.Column = TopLeft.Column + Iter;
+
+                    Result.Add(NewPoint);
+                }
+            }
+
+            // Left
+            for (int Iter = 0; Iter < BottomRight.Row - TopLeft.Row; ++Iter)
+            {
+                if (WorldInst.IsValidIndex(TopLeft.Row + Iter, TopLeft.Column))
+                {
+                    Point NewPoint;
+                    NewPoint.Row = TopLeft.Row + Iter;
+                    NewPoint.Column = TopLeft.Column;
+
+                    Result.Add(NewPoint);
+                }
+            }
 
             return Result;
         }
