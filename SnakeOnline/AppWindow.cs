@@ -18,6 +18,11 @@ namespace SnakeOnline
             GL.ClearColor(Color.Red);
         }
 
+        protected void DrawGrid()
+        {
+
+        }
+
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
