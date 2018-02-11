@@ -8,16 +8,14 @@ namespace SnakeOnline
     {
         public static void Main()
         {
-            GameWindow AppWindow = new GameWindow(100, 100, OpenTK.Graphics.GraphicsMode.Default, "Snake Online", 0, DisplayDevice.Default);
+            AppWindow Window = new AppWindow();
 
-            GameView LocalView = new GameView();
-            if (!LocalView.Initialize(AppWindow, 25, 25))
-            {
-                throw new Exception("Failed to Create Local Game");
-            }
+            GameManager Manager = new GameManager();
 
-            LocalView.Run(0.2d);
-            AppWindow.Run(30.0d);
+            Manager.Initialize(Window);
+
+            Manager.Run(0.2d);
+            Window.Run(30.0d);
         }
     }
 }

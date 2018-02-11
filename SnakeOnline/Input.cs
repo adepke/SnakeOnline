@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
-
-using OpenTK;
 
 namespace SnakeOnline
 {
-    enum MovementDirection
+    public enum MovementDirection
     {
         Up,
         Down,
@@ -17,38 +14,11 @@ namespace SnakeOnline
         Right
     }
 
-    class Input
+    abstract class Input
     {
-        private Snake SnakeInst;
-
         public MovementDirection LastInput = MovementDirection.Left;
 
-        public bool Initialize(Snake SnakeInst, GameWindow WindowInst)
-        {
-            this.SnakeInst = SnakeInst;
-
-            WindowInst.KeyPress += KeyPress;
-
-            return true;
-        }
-
-        public void KeyPress(object Sender, KeyPressEventArgs e)
-        {
-            switch (e.KeyChar)
-            {
-                case 'w':
-                    LastInput = MovementDirection.Up;
-                    break;
-                case 'a':
-                    LastInput = MovementDirection.Left;
-                    break;
-                case 's':
-                    LastInput = MovementDirection.Down;
-                    break;
-                case 'd':
-                    LastInput = MovementDirection.Right;
-                    break;
-            }
-        }
+        public abstract bool Initialize();
+        public abstract bool Initialize(AppWindow Window);
     }
 }

@@ -8,18 +8,15 @@ namespace SnakeOnline
 {
     class GameView
     {
-        public GameWindow WindowInst;
         public World WorldInst;
         public ItemSpawner ItemSpawnerInst;
         public Snake SnakeInst;
         public Input InputInst;
 
-        private Timer GameLoop;
+        public bool GameOver = false;
 
-        public bool Initialize(GameWindow Window, int WorldSizeX, int WorldSizeY)
+        public bool Initialize(AppWindow Window, int WorldSizeX, int WorldSizeY)
         {
-            WindowInst = Window;
-
             WorldInst = new World();
 
             if (!WorldInst.Initialize(WorldSizeX, WorldSizeY))
@@ -41,9 +38,9 @@ namespace SnakeOnline
                 return false;
             }
 
-            InputInst = new Input();
+            InputInst = new LocalInput();
 
-            if (!InputInst.Initialize(SnakeInst, WindowInst))
+            if (!InputInst.Initialize(Window))
             {
                 return false;
             }
@@ -51,20 +48,47 @@ namespace SnakeOnline
             return true;
         }
 
-        public void Run(double TickRate)
+        public bool InitializeNetworked(int WorldSizeX, int WorldSizeY)
+        {
+            WorldInst = new World();
+
+            if (!WorldInst.Initialize(WorldSizeX, WorldSizeY))
+            {
+                return false;
+            }
+
+            ItemSpawnerInst = new ItemSpawner();
+
+            if (!ItemSpawnerInst.Initialize(WorldInst))
+            {
+                return false;
+            }
+
+            SnakeInst = new Snake();
+
+            if (!SnakeInst.Initialize(WorldInst, ItemSpawnerInst))
+            {
+                return false;
+            }
+
+            InputInst = new NetworkedInput();
+
+            if (!InputInst.Initialize())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public void Run(double UpdateRate)
         {
             ItemSpawnerInst.SpawnNew();
 
             SnakeInst.Spawn(15, 20, 8);
-
-            GameLoop = new Timer(TickRate * 1000d);
-
-            GameLoop.AutoReset = true;
-            GameLoop.Elapsed += new ElapsedEventHandler(Tick);
-            GameLoop.Enabled = true;
         }
 
-        private void Tick(object Sender, ElapsedEventArgs e)
+        internal void Tick()
         {
             if (SnakeInst.IsAlive())
             {
@@ -72,7 +96,7 @@ namespace SnakeOnline
 
                 if (!SnakeInst.IsAlive())
                 {
-                    GameOver();
+                    GameOver = true;
 
                     return;
                 }
@@ -80,7 +104,7 @@ namespace SnakeOnline
 
             else
             {
-                GameOver();
+                GameOver = true;
 
                 return;
             }
@@ -101,13 +125,6 @@ namespace SnakeOnline
 
                 Console.WriteLine("");
             }
-        }
-
-        private void GameOver()
-        {
-            GameLoop.Stop();
-
-            Console.WriteLine("\nGame Over");
         }
     }
 }
