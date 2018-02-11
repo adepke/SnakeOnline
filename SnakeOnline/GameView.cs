@@ -13,6 +13,8 @@ namespace SnakeOnline
         public Snake SnakeInst;
         public Input InputInst;
 
+        private Timer GameLoop;
+
         public bool Initialize(GameWindow Window, int WorldSizeX, int WorldSizeY)
         {
             WindowInst = Window;
@@ -45,14 +47,38 @@ namespace SnakeOnline
         {
             SnakeInst.Spawn(15, 20, 8);
 
-            Timer GameLoopTimer = new Timer(TickRate * 1000d);
+            GameLoop = new Timer(TickRate * 1000d);
 
-            GameLoopTimer.AutoReset = true;
-            GameLoopTimer.Elapsed += new ElapsedEventHandler(Tick);
-            GameLoopTimer.Enabled = true;
+            GameLoop.AutoReset = true;
+            GameLoop.Elapsed += new ElapsedEventHandler(Tick);
+            GameLoop.Enabled = true;
         }
 
         private void Tick(object Sender, ElapsedEventArgs e)
+        {
+            if (SnakeInst.IsAlive())
+            {
+                SnakeInst.Move(InputInst.LastInput);
+
+                if (!SnakeInst.IsAlive())
+                {
+                    GameOver();
+
+                    return;
+                }
+            }
+
+            else
+            {
+                GameOver();
+
+                return;
+            }
+
+            DebugDraw();
+        }
+
+        private void DebugDraw()
         {
             Console.Clear();
 
@@ -65,16 +91,13 @@ namespace SnakeOnline
 
                 Console.WriteLine("");
             }
+        }
 
-            if (SnakeInst.IsAlive())
-            {
-                SnakeInst.Move(InputInst.LastInput);
-            }
+        private void GameOver()
+        {
+            GameLoop.Stop();
 
-            else
-            {
-                Console.WriteLine("\nGame Over");
-            }
+            Console.WriteLine("\nGame Over");
         }
     }
 }

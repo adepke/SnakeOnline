@@ -8,7 +8,7 @@ namespace SnakeOnline
     {
         public static void Main()
         {
-            GameWindow AppWindow = new GameWindow(800, 600, OpenTK.Graphics.GraphicsMode.Default, "Snake Online", 0, DisplayDevice.Default);
+            GameWindow AppWindow = new GameWindow(100, 100, OpenTK.Graphics.GraphicsMode.Default, "Snake Online", 0, DisplayDevice.Default);
 
             GameView LocalView = new GameView();
             if (!LocalView.Initialize(AppWindow, 25, 25))
