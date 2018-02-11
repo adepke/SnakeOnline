@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 using OpenTK;
 
@@ -12,7 +13,7 @@ namespace SnakeOnline
 
             GameManager Manager = new GameManager();
 
-            Manager.Initialize(Window);
+            Manager.Initialize(Window, "Snake Online", new Size(100, 100));
 
             Manager.Run(0.2d);
             Window.Run(30.0d);

@@ -15,12 +15,11 @@ namespace SnakeOnline
 
         private Timer ClientGameLoop;
 
-        public void Initialize(AppWindow Window)
+        public void Initialize(AppWindow Window, string WindowTitle, Size WindowSize)
         {
             this.Window = Window;
-
-            Window.Title = "Snake Online";
-            Window.Size = new Size(100, 100);
+            Window.Title = WindowTitle;
+            Window.Size = WindowSize;
 
             LocalView = new GameView();
         }
