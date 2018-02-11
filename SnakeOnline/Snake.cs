@@ -24,11 +24,11 @@ namespace SnakeOnline
             return true;
         }
 
-        public void Spawn(int X, int Y, int Size)
+        public void Spawn(int Row, int Column, int Size)
         {
             Point Head;
-            Head.X = X;
-            Head.Y = Y;
+            Head.Row = Row;
+            Head.Column = Column;
 
             Coords.Add(Head);
 
@@ -47,20 +47,20 @@ namespace SnakeOnline
             switch (Direction)
             {
                 case MovementDirection.Up:
-                    NewPosition.Y -= 1;
+                    NewPosition.Row -= 1;
                     break;
                 case MovementDirection.Down:
-                    NewPosition.Y += 1;
+                    NewPosition.Row += 1;
                     break;
                 case MovementDirection.Left:
-                    NewPosition.X -= 1;
+                    NewPosition.Column -= 1;
                     break;
                 case MovementDirection.Right:
-                    NewPosition.X += 1;
+                    NewPosition.Column += 1;
                     break;
             }
 
-            if (!WorldInst.IsValidIndex(NewPosition.X, NewPosition.Y))
+            if (!WorldInst.IsValidIndex(NewPosition.Row, NewPosition.Column))
             {
                 Alive = false;
 
@@ -68,7 +68,7 @@ namespace SnakeOnline
             }
 
             // Hit Self
-            if ((int)WorldInst.Get(NewPosition.X, NewPosition.Y) == 1)
+            if ((int)WorldInst.Get(NewPosition.Row, NewPosition.Column) == 1)
             {
                 Alive = false;
 
@@ -78,21 +78,23 @@ namespace SnakeOnline
             bool Grow = OverrideGrow;
 
             // Hit an Item
-            if ((int)WorldInst.Get(NewPosition.X, NewPosition.Y) == 2)
+            if ((int)WorldInst.Get(NewPosition.Row, NewPosition.Column) == 2)
             {
                 Grow = true;
             }
 
             Coords.Insert(0, NewPosition);
 
-            WorldInst.Set(1, NewPosition.X, NewPosition.Y);
+            WorldInst.Set(1, NewPosition.Row, NewPosition.Column);
 
+            /*
             if (!Grow)
             {
                 Coords.RemoveAt(Coords.Count - 2);
 
                 WorldInst.Set(0, Coords[Coords.Count - 2].X, Coords[Coords.Count - 2].Y);
             }
+            */
         }
 
         public Point GetHead()

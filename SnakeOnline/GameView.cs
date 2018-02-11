@@ -43,7 +43,7 @@ namespace SnakeOnline
 
         public void Run(double TickRate)
         {
-            SnakeInst.Spawn(4, 7, 2);
+            SnakeInst.Spawn(15, 20, 1);
 
             Timer GameLoopTimer = new Timer(TickRate * 1000d);
 
@@ -65,8 +65,6 @@ namespace SnakeOnline
 
                 Console.WriteLine("");
             }
-
-            Console.WriteLine("Head | X: {0}   Y: {1}", SnakeInst.GetHead().X, SnakeInst.GetHead().Y);
 
             if (SnakeInst.IsAlive())
             {

@@ -6,7 +6,7 @@ namespace SnakeOnline
 {
     struct Point
     {
-        public int X, Y;
+        public int Row, Column;
     }
 
     class World
