@@ -43,7 +43,7 @@ namespace SnakeOnline
 
         public void Run(double TickRate)
         {
-            SnakeInst.Spawn(15, 20, 1);
+            SnakeInst.Spawn(15, 20, 8);
 
             Timer GameLoopTimer = new Timer(TickRate * 1000d);
 

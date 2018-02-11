@@ -37,6 +37,8 @@ namespace SnakeOnline
                 Move(MovementDirection.Left, true);
             }
 
+            Move(MovementDirection.Left);
+
             Alive = true;
         }
 
@@ -87,14 +89,14 @@ namespace SnakeOnline
 
             WorldInst.Set(1, NewPosition.Row, NewPosition.Column);
 
-            /*
             if (!Grow)
             {
-                Coords.RemoveAt(Coords.Count - 2);
+                Point Tail = Coords[Coords.Count - 1];
 
-                WorldInst.Set(0, Coords[Coords.Count - 2].X, Coords[Coords.Count - 2].Y);
+                Coords.RemoveAt(Coords.Count - 1);
+
+                WorldInst.Set(0, Tail.Row, Tail.Column);
             }
-            */
         }
 
         public Point GetHead()
