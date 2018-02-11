@@ -27,7 +27,7 @@ namespace SnakeOnline
 
         public void Run(double UpdateRate)
         {
-            if (!LocalView.Initialize(Window, 25, 25))
+            if (!LocalView.Initialize(Window, 30, 40))
             {
                 throw new Exception("Failed to Create Local Game");
             }
@@ -46,6 +46,8 @@ namespace SnakeOnline
             if (LocalView.GameOver)
             {
                 Console.WriteLine("Local Game Over");
+
+                ClientGameLoop.Stop();
             }
 
             else

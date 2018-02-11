@@ -14,6 +14,8 @@ namespace SnakeOnline
 
         public List<Point> Coords;
 
+        private int GrowthQueue = 0;
+
         private bool Alive = false;
 
         public bool Initialize(World WorldInst, ItemSpawner ItemSpawnerInst)
@@ -34,9 +36,11 @@ namespace SnakeOnline
 
             Coords.Add(Head);
 
+            GrowthQueue = Size - 1;
+
             for (int Iter = 0; Iter < Size - 1; ++Iter)
             {
-                Move(MovementDirection.Left, true);
+                Move(MovementDirection.Left);
             }
 
             Move(MovementDirection.Left);
@@ -44,7 +48,7 @@ namespace SnakeOnline
             Alive = true;
         }
 
-        public void Move(MovementDirection Direction, bool OverrideGrow = false)
+        public void Move(MovementDirection Direction)
         {
             Point NewPosition = Coords[0];
 
@@ -79,12 +83,10 @@ namespace SnakeOnline
                 return;
             }
 
-            bool Grow = OverrideGrow;
-
             // Hit an Item
             if ((int)WorldInst.Get(NewPosition.Row, NewPosition.Column) == 2)
             {
-                Grow = true;
+                GrowthQueue += ItemSpawner.ItemWorth;
 
                 ItemSpawnerInst.SpawnNew();
             }
@@ -93,13 +95,18 @@ namespace SnakeOnline
 
             WorldInst.Set(1, NewPosition.Row, NewPosition.Column);
 
-            if (!Grow)
+            if (GrowthQueue == 0)
             {
                 Point Tail = Coords[Coords.Count - 1];
 
                 Coords.RemoveAt(Coords.Count - 1);
 
                 WorldInst.Set(0, Tail.Row, Tail.Column);
+            }
+
+            else
+            {
+                GrowthQueue -= 1;
             }
         }
 

@@ -8,6 +8,8 @@ namespace SnakeOnline
 {
     class ItemSpawner
     {
+        public static int ItemWorth = 4;
+
         private World WorldInst;
         private Random RandomHandler;
 
