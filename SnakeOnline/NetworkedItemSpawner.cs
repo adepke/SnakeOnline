@@ -21,7 +21,7 @@ namespace SnakeOnline
             return;
         }
 
-        internal void NetworkedSpawnNew(Point Position)
+        public void NetworkedSpawnNew(Point Position)
         {
             
         }
