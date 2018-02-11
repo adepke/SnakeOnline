@@ -11,7 +11,6 @@ namespace SnakeOnline
         public static int ItemWorth = 4;
 
         protected World WorldInst;
-        protected Random RandomHandler;
 
         public abstract bool Initialize(World WorldInst);
 

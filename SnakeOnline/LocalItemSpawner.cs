@@ -8,6 +8,8 @@ namespace SnakeOnline
 {
     class LocalItemSpawner : ItemSpawner
     {
+        private Random RandomHandler;
+
         public override bool Initialize(World WorldInst)
         {
             this.WorldInst = WorldInst;
