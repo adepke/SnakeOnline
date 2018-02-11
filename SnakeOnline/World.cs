@@ -46,7 +46,7 @@ namespace SnakeOnline
 
         public bool IsValidIndex(int Row, int Column)
         {
-            return (Row <= Rows && Column <= Columns);
+            return ((Row >= 0 && Row < Rows) && (Column >= 0 && Column < Columns));
         }
 
         public object Get(int Row, int Column)

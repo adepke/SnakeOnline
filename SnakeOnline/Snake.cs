@@ -34,13 +34,13 @@ namespace SnakeOnline
 
             for (int Iter = 0; Iter < Size - 1; ++Iter)
             {
-                Move(MovementDirection.Left);
+                Move(MovementDirection.Left, true);
             }
 
             Alive = true;
         }
 
-        public void Move(MovementDirection Direction)
+        public void Move(MovementDirection Direction, bool OverrideGrow = false)
         {
             Point NewPosition = Coords[0];
 
@@ -60,6 +60,13 @@ namespace SnakeOnline
                     break;
             }
 
+            if (!WorldInst.IsValidIndex(NewPosition.X, NewPosition.Y))
+            {
+                Alive = false;
+
+                return;
+            }
+
             // Hit Self
             if ((int)WorldInst.Get(NewPosition.X, NewPosition.Y) == 1)
             {
@@ -68,7 +75,7 @@ namespace SnakeOnline
                 return;
             }
 
-            bool Grow = false;
+            bool Grow = OverrideGrow;
 
             // Hit an Item
             if ((int)WorldInst.Get(NewPosition.X, NewPosition.Y) == 2)
@@ -76,18 +83,9 @@ namespace SnakeOnline
                 Grow = true;
             }
 
-            if (WorldInst.IsValidIndex(NewPosition.X, NewPosition.Y))
-            {
-                Coords.Insert(0, NewPosition);
+            Coords.Insert(0, NewPosition);
 
-                WorldInst.Set(1, NewPosition.X, NewPosition.Y);
-            }
-
-            // Hit World Border
-            else
-            {
-                Alive = false;
-            }
+            WorldInst.Set(1, NewPosition.X, NewPosition.Y);
 
             if (!Grow)
             {
