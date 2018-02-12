@@ -22,10 +22,6 @@ namespace SnakeOnline
         {
             this.WorldInst = WorldInst;
 
-            GridCellTexture = LoadTexture2("../Assets/GridCell.png");
-            SnakeCellTexture = LoadTexture2("../Assets/SnakeCell.png");
-            ItemCellTexture = LoadTexture2("../Assets/ItemCell.png");
-
             if (GridCellTexture <= 0 || SnakeCellTexture <= 0 || ItemCellTexture <= 0)
             {
                 return false;
@@ -39,6 +35,13 @@ namespace SnakeOnline
             base.OnLoad(e);
 
             GL.ClearColor(Color.Black);
+            
+            GridCellTexture = LoadTexture2("../Assets/GridCell.png");
+            SnakeCellTexture = LoadTexture2("../Assets/SnakeCell.png");
+            ItemCellTexture = LoadTexture2("../Assets/ItemCell.png");
+            
+            GL.Enable(EnableCap.Texture2D);
+            GL.Enalbe(EnableCap.Blend);  // Enable Alpha Blending
         }
 
         protected override void OnResize(EventArgs e)
