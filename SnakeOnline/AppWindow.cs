@@ -140,14 +140,23 @@ namespace SnakeOnline
                 for (int Column = 0; Column < Columns; ++Column)
                 {
                     GL.Begin(PrimitiveType.Quads);
+                    
+                    // Bottom Left
                     GL.TexCoord2(0f, 1f);
                     GL.Vertex2(Column * 25, Row * 25);
+                    
+                    // Bottom Right
                     GL.TexCoord2(1f, 1f);
-                    GL.Vertex2(Column * 25 + 23.5, Row * 25);
+                    GL.Vertex2(Column * 25 + 25, Row * 25);
+                    
+                    // Top Right
                     GL.TexCoord2(1f, 0f);
-                    GL.Vertex2(Column * 25 + 23.5, Row * 25 + 23.5);
+                    GL.Vertex2(Column * 25 + 25, Row * 25 + 25);
+                    
+                    // Top Left
                     GL.TexCoord2(0f, 0f);
-                    GL.Vertex2(Column * 25, Row * 25 + 23.5);
+                    GL.Vertex2(Column * 25, Row * 25 + 25);
+                    
                     GL.End();
                 }
             }
