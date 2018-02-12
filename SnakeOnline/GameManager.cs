@@ -32,6 +32,11 @@ namespace SnakeOnline
                 throw new Exception("Failed to Create Local Game");
             }
 
+            if (!Window.Initialize(LocalView.WorldInst))
+            {
+                throw new Exception("Failed to Initialize Window");
+            }
+
             LocalView.Run(UpdateRate);
 
             ClientGameLoop = new Timer(UpdateRate * 1000d);
