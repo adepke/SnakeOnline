@@ -26,7 +26,7 @@ namespace SnakeOnline
             SnakeCellTexture = LoadTexture("../Assets/SnakeCell.png");
             ItemCellTexture = LoadTexture("../Assets/ItemCell.png");
 
-            if (GridCellTexture == 0 || SnakeCellTexture == 0 || ItemCellTexture == 0)
+            if (GridCellTexture <= 0 || SnakeCellTexture <= 0 || ItemCellTexture <= 0)
             {
                 return false;
             }
@@ -51,26 +51,36 @@ namespace SnakeOnline
 
         protected int LoadTexture(string File)
         {
-            Bitmap TextureBitmap = new Bitmap(File);
+            int Texture = 0;
 
-            int Texture;
-            GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
+            try
+            {
+                using (Bitmap TextureBitmap = new Bitmap(File))
+                {
+                    GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
 
-            GL.GenTextures(1, out Texture);
-            GL.BindTexture(TextureTarget.Texture2D, Texture);
+                    GL.GenTextures(1, out Texture);
+                    GL.BindTexture(TextureTarget.Texture2D, Texture);
 
-            BitmapData TextureBitmapData = TextureBitmap.LockBits(new System.Drawing.Rectangle(0, 0, TextureBitmap.Width, TextureBitmap.Height),
-                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    BitmapData TextureBitmapData = TextureBitmap.LockBits(new System.Drawing.Rectangle(0, 0, TextureBitmap.Width, TextureBitmap.Height),
+                        ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureBitmapData.Width, TextureBitmapData.Height, 0,
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, TextureBitmapData.Scan0);
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureBitmapData.Width, TextureBitmapData.Height, 0,
+                        OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, TextureBitmapData.Scan0);
 
-            TextureBitmap.UnlockBits(TextureBitmapData);
+                    TextureBitmap.UnlockBits(TextureBitmapData);
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+                }
+            }
+
+            catch (System.IO.FileNotFoundException e)
+            {
+                return -1;
+            }
 
             return Texture;
         }
