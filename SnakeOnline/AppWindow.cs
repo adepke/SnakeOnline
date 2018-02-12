@@ -22,13 +22,6 @@ namespace SnakeOnline
         {
             this.WorldInst = WorldInst;
 
-            /*
-            if (GridCellTexture <= 0 || SnakeCellTexture <= 0 || ItemCellTexture <= 0)
-            {
-                return false;
-            }
-            */
-
             return true;
         }
 
@@ -36,7 +29,7 @@ namespace SnakeOnline
         {
             base.OnLoad(e);
 
-            GL.ClearColor(Color.Black);
+            GL.ClearColor(Color.White);
             
             GridCellTexture = LoadTexture(@"../../../Assets/GridCell.png");
             SnakeCellTexture = LoadTexture(@"../../../Assets/SnakeCell.png");
@@ -132,10 +125,10 @@ namespace SnakeOnline
 
         protected void DrawGrid(int Rows, int Columns)
         {
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadIdentity();
-            GL.PushMatrix();
-            
+            //GL.MatrixMode(MatrixMode.Projection);
+            //GL.LoadIdentity();
+            //GL.PushMatrix();
+
             GL.Color4(Color.White);
             
             GL.BindTexture(TextureTarget.Texture2D, GridCellTexture);
@@ -145,7 +138,7 @@ namespace SnakeOnline
                 for (int Column = 0; Column < Columns; ++Column)
                 {
                     GL.Begin(PrimitiveType.Quads);
-                    
+
                     // Bottom Left
                     GL.TexCoord2(0f, 1f);
                     GL.Vertex2(Column * 25, Row * 25);
@@ -168,7 +161,7 @@ namespace SnakeOnline
             
             GL.BindTexture(TextureTarget.Texture2D, 0);
             
-            GL.PopMatrix();
+            //GL.PopMatrix();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
