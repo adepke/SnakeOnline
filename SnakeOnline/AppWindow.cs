@@ -22,9 +22,9 @@ namespace SnakeOnline
         {
             this.WorldInst = WorldInst;
 
-            GridCellTexture = LoadTexture("../Assets/GridCell.png");
-            SnakeCellTexture = LoadTexture("../Assets/SnakeCell.png");
-            ItemCellTexture = LoadTexture("../Assets/ItemCell.png");
+            GridCellTexture = LoadTexture2("../Assets/GridCell.png");
+            SnakeCellTexture = LoadTexture2("../Assets/SnakeCell.png");
+            ItemCellTexture = LoadTexture2("../Assets/ItemCell.png");
 
             if (GridCellTexture <= 0 || SnakeCellTexture <= 0 || ItemCellTexture <= 0)
             {
@@ -82,6 +82,43 @@ namespace SnakeOnline
                 return -1;
             }
 
+            return Texture;
+        }
+        
+        protected int LoadTexture2(string File)
+        {
+            using (Bitmap TextureBitmap = new Bitmap(File)
+            {
+                int Texture = GL.GenTexture();
+                
+                GL.BindTexture(TextureTarget.Texture2D, Texture);
+                
+                // Prevent Averaging, Maintaining Image Quality.
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Nearest);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Nearest);
+                
+                // Clamp.
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)All.ClampToEdge);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)All.ClampToEdge);
+                
+                // Create Texture Object Definition.
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureBitmap.Width, TextureBitmap.Height, 0,
+                    OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
+                    
+                // Load Texture into Bitmap Data.
+                BitmapData TextureBitmapData = TextureBitmap.LockBits(new Rectangle(0, 0, TextureBitmap.Width, TextureBitmap.Height),
+                    ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    
+                // Write Bitmap to Texture Object.
+                GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, TextureBitmapData.Width, TextureBitmapData.Height,
+                        OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, TextureBitmapData.Scan0);
+                        
+                TextureBitmap.UnlockBits(TextureBitmapData);
+            }
+            
+            // Reset Texture Binding.
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+            
             return Texture;
         }
 
