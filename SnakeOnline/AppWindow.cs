@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Drawing.Imaging;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -13,9 +14,22 @@ namespace SnakeOnline
     {
         private World WorldInst;
 
+        private int GridCellTexture;
+        private int SnakeCellTexture;
+        private int ItemCellTexture;
+
         public bool Initialize(World WorldInst)
         {
             this.WorldInst = WorldInst;
+
+            GridCellTexture = LoadTexture("../Assets/GridCell.png");
+            SnakeCellTexture = LoadTexture("../Assets/SnakeCell.png");
+            ItemCellTexture = LoadTexture("../Assets/ItemCell.png");
+
+            if (GridCellTexture == 0 || SnakeCellTexture == 0 || ItemCellTexture == 0)
+            {
+                return false;
+            }
 
             return true;
         }
@@ -35,6 +49,32 @@ namespace SnakeOnline
             GL.Ortho(0, Width, Height, 0, -1, 1);
         }
 
+        protected int LoadTexture(string File)
+        {
+            Bitmap TextureBitmap = new Bitmap(File);
+
+            int Texture;
+            GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
+
+            GL.GenTextures(1, out Texture);
+            GL.BindTexture(TextureTarget.Texture2D, Texture);
+
+            BitmapData TextureBitmapData = TextureBitmap.LockBits(new System.Drawing.Rectangle(0, 0, TextureBitmap.Width, TextureBitmap.Height),
+                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureBitmapData.Width, TextureBitmapData.Height, 0,
+                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, TextureBitmapData.Scan0);
+
+            TextureBitmap.UnlockBits(TextureBitmapData);
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+
+            return Texture;
+        }
+
         protected void DrawGrid(int Rows, int Columns)
         {
             for (int Row = 0; Row < Rows; ++Row)
@@ -42,7 +82,8 @@ namespace SnakeOnline
                 for (int Column = 0; Column < Columns; ++Column)
                 {
                     GL.Begin(PrimitiveType.Quads);
-                    GL.Color3(1f, (Row / (Rows * 2)) + (Column / (Columns * 2)), (Row / (Rows * 2)) + (Column / (Columns * 2)));
+                    //GL.Color3((Row / (Rows * 2)) + (Column / (Columns * 2)), (Row / (Rows * 2)) + (Column / (Columns * 2)), (Row / (Rows * 2)) + (Column / (Columns * 2)));
+                    GL.Color3(0.2 + Row / Rows, 0.2 + Row / Rows, 0.2 + Row / Rows);
                     GL.Vertex2(Column * 25, Row * 25);
                     GL.Vertex2(Column * 25 + 23.5, Row * 25);
                     GL.Vertex2(Column * 25 + 23.5, Row * 25 + 23.5);
