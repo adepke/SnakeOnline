@@ -127,20 +127,34 @@ namespace SnakeOnline
 
         protected void DrawGrid(int Rows, int Columns)
         {
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+            GL.PushMatrix();
+            
+            GL.Color4(Color.White);
+            
+            GL.BindTexture(TextureTarget.Texture2D, GridCellTexture);
+        
             for (int Row = 0; Row < Rows; ++Row)
             {
                 for (int Column = 0; Column < Columns; ++Column)
                 {
                     GL.Begin(PrimitiveType.Quads);
-                    //GL.Color3((Row / (Rows * 2)) + (Column / (Columns * 2)), (Row / (Rows * 2)) + (Column / (Columns * 2)), (Row / (Rows * 2)) + (Column / (Columns * 2)));
-                    GL.Color3(0.2 + Row / Rows, 0.2 + Row / Rows, 0.2 + Row / Rows);
+                    GL.TexCoord2(0f, 1f);
                     GL.Vertex2(Column * 25, Row * 25);
+                    GL.TexCoord2(1f, 1f);
                     GL.Vertex2(Column * 25 + 23.5, Row * 25);
+                    GL.TexCoord2(1f, 0f);
                     GL.Vertex2(Column * 25 + 23.5, Row * 25 + 23.5);
+                    GL.TexCoord2(0f, 0f);
                     GL.Vertex2(Column * 25, Row * 25 + 23.5);
                     GL.End();
                 }
             }
+            
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+            
+            GL.PopMatrix();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
