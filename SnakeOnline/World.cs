@@ -7,16 +7,6 @@ namespace SnakeOnline
     struct Point
     {
         public int Row, Column;
-
-        public static bool operator==(Point TargetA, Point TargetB)
-        {
-            return (TargetA.Row == TargetB.Row && TargetA.Column == TargetB.Column);
-        }
-
-        public static bool operator!=(Point TargetA, Point TargetB)
-        {
-            return !(TargetA == TargetB);
-        }
     }
 
     class World
