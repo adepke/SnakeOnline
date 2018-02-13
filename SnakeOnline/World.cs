@@ -69,7 +69,7 @@ namespace SnakeOnline
 
         public void ConstructFromNetwork(SnakeOnlineServer.ServerOutput ServerOut)
         {
-            ServerOut.GetWorld(out ItemMatrix);
+            ServerOut.GetWorld(out Rows, out Columns, out ItemMatrix);
         }
     }
 }

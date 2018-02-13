@@ -41,7 +41,7 @@ namespace SnakeOnline
             LocalView.Run(UpdateRate);
 
             // Exchange Worlds
-            LocalView.ServerIn.SendWorld(LocalView.WorldInst.ItemMatrix);
+            LocalView.ServerIn.SendWorld(LocalView.WorldInst.GetRows(), LocalView.WorldInst.GetColumns(), LocalView.WorldInst.ItemMatrix);
             LocalView.WorldInst.ConstructFromNetwork(LocalView.ServerOut);
 
             NetworkUpdateLoop = new Timer(500.0d);

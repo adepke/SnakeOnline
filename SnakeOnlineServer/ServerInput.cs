@@ -10,7 +10,7 @@ namespace SnakeOnlineServer
     public class ServerInput
     {
         // Copy Entire Game World over Network
-        public void SendWorld(int[,] World)
+        public void SendWorld(int Rows, int Columns, int[,] World)
         {
 
         }
