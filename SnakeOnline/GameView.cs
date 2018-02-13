@@ -109,7 +109,7 @@ namespace SnakeOnline
                 return;
             }
 
-            DebugDraw();
+            //DebugDraw();
         }
 
         private void DebugDraw()
