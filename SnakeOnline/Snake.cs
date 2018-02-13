@@ -14,6 +14,8 @@ namespace SnakeOnline
 
         public List<Point> Coords;
 
+        private MovementDirection PreviousDirection;
+
         private int GrowthQueue = 0;
 
         private bool Alive = false;
@@ -36,6 +38,8 @@ namespace SnakeOnline
 
             Coords.Add(Head);
 
+            PreviousDirection = Input.DefaultInput;
+
             GrowthQueue = Size - 1;
 
             for (int Iter = 0; Iter < Size - 1; ++Iter)
@@ -50,6 +54,41 @@ namespace SnakeOnline
 
         public void Move(MovementDirection Direction)
         {
+            // Prevent Move Backwards Into Self
+            if (Direction == MovementDirection.Up && Coords.Count > 1)
+            {
+                if (PreviousDirection == MovementDirection.Down)
+                {
+                    Direction = PreviousDirection;
+                }
+            }
+
+            else if (Direction == MovementDirection.Down && Coords.Count > 1)
+            {
+                if (PreviousDirection == MovementDirection.Up)
+                {
+                    Direction = PreviousDirection;
+                }
+            }
+
+            else if (Direction == MovementDirection.Left && Coords.Count > 1)
+            {
+                if (PreviousDirection == MovementDirection.Right)
+                {
+                    Direction = PreviousDirection;
+                }
+            }
+
+            else if (Direction == MovementDirection.Right && Coords.Count > 1)
+            {
+                if (PreviousDirection == MovementDirection.Left)
+                {
+                    Direction = PreviousDirection;
+                }
+            }
+
+            PreviousDirection = Direction;
+
             Point NewPosition = Coords[0];
 
             switch (Direction)
