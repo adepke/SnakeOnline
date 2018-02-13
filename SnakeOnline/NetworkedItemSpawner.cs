@@ -17,6 +17,8 @@ namespace SnakeOnline
 
         public override bool Initialize(SnakeOnlineServer.ServerOutput ServerOut, World WorldInst)
         {
+            ServerOutHandler = ServerOut;
+
             this.WorldInst = WorldInst;
 
             return true;

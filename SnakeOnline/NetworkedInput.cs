@@ -18,6 +18,8 @@ namespace SnakeOnline
 
         public override bool Initialize(SnakeOnlineServer.ServerOutput ServerOut)
         {
+            ServerOutHandle = ServerOut;
+
             return true;
         }
 

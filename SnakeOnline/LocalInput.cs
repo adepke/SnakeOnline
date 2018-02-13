@@ -15,6 +15,7 @@ namespace SnakeOnline
         public override bool Initialize(SnakeOnlineServer.ServerInput ServerIn, AppWindow WindowInst)
         {
             ServerInHandle = ServerIn;
+
             WindowInst.KeyPress += KeyPress;
 
             return true;

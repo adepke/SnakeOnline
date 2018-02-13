@@ -16,6 +16,8 @@ namespace SnakeOnline
 
         public override bool Initialize(SnakeOnlineServer.ServerInput ServerIn, World WorldInst)
         {
+            ServerInHandler = ServerIn;
+
             this.WorldInst = WorldInst;
 
             RandomHandler = new Random();
