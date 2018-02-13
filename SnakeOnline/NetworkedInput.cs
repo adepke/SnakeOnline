@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SnakeOnline
 {
-    class NetworkedInput : Input, INetworkable
+    class NetworkedInput : Input
     {
         private SnakeOnlineServer.ServerOutput ServerOutHandle;
 
@@ -21,8 +21,10 @@ namespace SnakeOnline
             return true;
         }
 
-        public void NetworkUpdate()
+        public override void NetworkUpdate()
         {
+            base.NetworkUpdate();
+
             int NewInput;
 
             ServerOutHandle.GetMovement(out NewInput);

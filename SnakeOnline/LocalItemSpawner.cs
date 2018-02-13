@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SnakeOnline
 {
-    class LocalItemSpawner : ItemSpawner, INetworkable
+    class LocalItemSpawner : ItemSpawner
     {
         private SnakeOnlineServer.ServerInput ServerInHandler;
 
@@ -151,8 +151,10 @@ namespace SnakeOnline
             return Result;
         }
 
-        public void NetworkUpdate()
+        public override void NetworkUpdate()
         {
+            base.NetworkUpdate();
+
             ServerInHandler.SendItemSpawn(LastSpawn.Row, LastSpawn.Column);
         }
     }

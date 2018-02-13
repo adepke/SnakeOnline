@@ -14,7 +14,7 @@ namespace SnakeOnline
         Right
     }
 
-    abstract class Input
+    abstract class Input : INetworkable
     {
         public static MovementDirection DefaultInput = MovementDirection.Right;
 
@@ -22,5 +22,9 @@ namespace SnakeOnline
 
         public abstract bool Initialize(SnakeOnlineServer.ServerInput ServerIn, AppWindow Window);
         public abstract bool Initialize(SnakeOnlineServer.ServerOutput ServerOut);
+
+        public virtual void NetworkUpdate()
+        {
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace SnakeOnline
         private AppWindow Window;
 
         private Timer ClientGameLoop;
+        private Timer NetworkUpdateLoop;
 
         public void Initialize(AppWindow Window, string WindowTitle, Size WindowSize)
         {
@@ -39,11 +40,22 @@ namespace SnakeOnline
 
             LocalView.Run(UpdateRate);
 
+            NetworkUpdateLoop = new Timer(500.0d);
+            NetworkUpdateLoop.AutoReset = true;
+            NetworkUpdateLoop.Elapsed += new ElapsedEventHandler(NetworkUpdate);
+            NetworkUpdateLoop.Enabled = true;
+
             ClientGameLoop = new Timer(UpdateRate * 1000d);
 
             ClientGameLoop.AutoReset = true;
             ClientGameLoop.Elapsed += new ElapsedEventHandler(GameLoop);
             ClientGameLoop.Enabled = true;
+        }
+
+        protected void NetworkUpdate(object Sender, ElapsedEventArgs e)
+        {
+            LocalView.InputInst.NetworkUpdate();
+            LocalView.ItemSpawnerInst.NetworkUpdate();
         }
 
         protected void GameLoop(object Sender, ElapsedEventArgs e)

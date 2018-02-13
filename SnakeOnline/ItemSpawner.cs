@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SnakeOnline
 {
-    abstract class ItemSpawner
+    abstract class ItemSpawner : INetworkable
     {
         public static int ItemWorth = 3;
 
@@ -16,5 +16,9 @@ namespace SnakeOnline
         public abstract bool Initialize(SnakeOnlineServer.ServerOutput ServerOut, World WorldInst);
 
         public abstract void SpawnNew();
+
+        public virtual void NetworkUpdate()
+        {
+        }
     }
 }

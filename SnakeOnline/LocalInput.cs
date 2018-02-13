@@ -8,7 +8,7 @@ using OpenTK;
 
 namespace SnakeOnline
 {
-    class LocalInput : Input, INetworkable
+    class LocalInput : Input
     {
         private SnakeOnlineServer.ServerInput ServerInHandle;
 
@@ -45,8 +45,10 @@ namespace SnakeOnline
             }
         }
 
-        public void NetworkUpdate()
+        public override void NetworkUpdate()
         {
+            base.NetworkUpdate();
+
             ServerInHandle.SendMovement((int)LastInput);
         }
     }
