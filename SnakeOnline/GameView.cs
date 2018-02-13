@@ -21,6 +21,7 @@ namespace SnakeOnline
         public bool Initialize(AppWindow Window, int WorldSizeX, int WorldSizeY)
         {
             ServerIn = new SnakeOnlineServer.ServerInput();
+            ServerOut = new SnakeOnlineServer.ServerOutput();
 
             WorldInst = new World();
 
@@ -55,6 +56,7 @@ namespace SnakeOnline
 
         public bool InitializeNetworked(int WorldSizeX, int WorldSizeY)
         {
+            ServerIn = new SnakeOnlineServer.ServerInput();
             ServerOut = new SnakeOnlineServer.ServerOutput();
 
             WorldInst = new World();

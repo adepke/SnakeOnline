@@ -14,7 +14,7 @@ namespace SnakeOnline
         private int Rows;
         private int Columns;
 
-        private int[,] ItemMatrix;
+        internal int[,] ItemMatrix;
 
         public bool Initialize(int Rows, int Columns)
         {
@@ -49,10 +49,10 @@ namespace SnakeOnline
             return ((Row >= 0 && Row < Rows) && (Column >= 0 && Column < Columns));
         }
 
-        public object Get(int Row, int Column)
+        public int Get(int Row, int Column)
         {
             if (!IsValidIndex(Row, Column))
-                return default(object);
+                return -1;
 
             return ItemMatrix[Row, Column];
         }

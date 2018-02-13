@@ -40,7 +40,8 @@ namespace SnakeOnline
 
             LocalView.Run(UpdateRate);
 
-            // Clone Client Player World.
+            // Exchange Worlds
+            LocalView.ServerIn.SendWorld(LocalView.WorldInst.ItemMatrix);
             LocalView.WorldInst.ConstructFromNetwork(LocalView.ServerOut);
 
             NetworkUpdateLoop = new Timer(500.0d);
