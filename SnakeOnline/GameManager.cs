@@ -32,7 +32,7 @@ namespace SnakeOnline
                 throw new Exception("Failed to Create Local Game");
             }
 
-            if (!Window.Initialize(LocalView.WorldInst))
+            if (!Window.Initialize(LocalView.WorldInst, LocalView.SnakeInst))
             {
                 throw new Exception("Failed to Initialize Window");
             }

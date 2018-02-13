@@ -125,7 +125,7 @@ namespace SnakeOnline
 
         public int GetSize()
         {
-            return Coords.Count;
+            return Coords.Count + GrowthQueue;
         }
 
         public bool IsAlive()

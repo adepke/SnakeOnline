@@ -12,15 +12,38 @@ namespace SnakeOnline
 {
     class AppWindow : GameWindow
     {
+        private Gwen.Renderer.OpenTK RenderHandler;
+        private Gwen.Skin.Base BaseSkin;
+        private Gwen.Control.Canvas BaseCanvas;
+
+        private Gwen.Control.TextBox SizeBox;
+
         private World WorldInst;
+        private Snake SnakeInst;
 
         private int GridCellTexture;
         private int SnakeCellTexture;
         private int ItemCellTexture;
 
-        public bool Initialize(World WorldInst)
+        public bool Initialize(World WorldInst, Snake SnakeInst)
         {
             this.WorldInst = WorldInst;
+            this.SnakeInst = SnakeInst;
+
+            RenderHandler = new Gwen.Renderer.OpenTK();
+            BaseSkin = new Gwen.Skin.TexturedBase(RenderHandler, "DefaultSkin.png");
+
+            BaseSkin.DefaultFont = new Gwen.Font(RenderHandler, "Arial", 10);
+
+            BaseCanvas = new Gwen.Control.Canvas(BaseSkin);
+
+            BaseCanvas.SetSize(Width, Height);
+            BaseCanvas.ShouldDrawBackground = true;
+            BaseCanvas.BackgroundColor = Color.White;
+
+            SizeBox = new Gwen.Control.TextBox(BaseCanvas);
+            SizeBox.TextColor = Color.Black;
+            SizeBox.SetPosition(0, WorldInst.GetRows() * 25);
 
             return true;
         }
@@ -183,6 +206,11 @@ namespace SnakeOnline
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+            SizeBox.Text = "Size: " + SnakeInst.GetSize();
+            SizeBox.SizeToContents();
+
+            BaseCanvas.RenderCanvas();
+
             DrawGrid(WorldInst.GetRows(), WorldInst.GetColumns());
 
             GL.Flush();
@@ -193,6 +221,10 @@ namespace SnakeOnline
         public override void Dispose()
         {
             base.Dispose();
+
+            BaseCanvas.Dispose();
+            BaseSkin.Dispose();
+            RenderHandler.Dispose();
         }
     }
 }
