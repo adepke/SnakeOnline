@@ -6,9 +6,16 @@ using System.Threading.Tasks;
 
 namespace SnakeOnline
 {
-    class NetworkedItemSpawner : ItemSpawner
+    class NetworkedItemSpawner : ItemSpawner, INetworkable
     {
-        public override bool Initialize(World WorldInst)
+        private SnakeOnlineServer.ServerOutput ServerOutHandler;
+
+        public override bool Initialize(SnakeOnlineServer.ServerInput ServerInput, World WorldInst)
+        {
+            return false;
+        }
+
+        public override bool Initialize(SnakeOnlineServer.ServerOutput ServerOut, World WorldInst)
         {
             this.WorldInst = WorldInst;
 
@@ -21,9 +28,13 @@ namespace SnakeOnline
             return;
         }
 
-        public void NetworkedSpawnNew(Point Position)
+        public void NetworkUpdate()
         {
-            
+            int Row, Column;
+
+            ServerOutHandler.GetItemSpawn(out Row, out Column);
+
+            WorldInst.Set(2, Row, Column);
         }
     }
 }

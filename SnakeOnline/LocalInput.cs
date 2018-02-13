@@ -8,18 +8,22 @@ using OpenTK;
 
 namespace SnakeOnline
 {
-    class LocalInput : Input
+    class LocalInput : Input, INetworkable
     {
-        public override bool Initialize()
-        {
-            return false;
-        }
+        private SnakeOnlineServer.ServerInput ServerInHandle;
 
-        public override bool Initialize(AppWindow WindowInst)
+        public override bool Initialize(SnakeOnlineServer.ServerInput ServerIn, AppWindow WindowInst)
         {
+            ServerInHandle = ServerIn;
             WindowInst.KeyPress += KeyPress;
 
             return true;
+        }
+
+        // Never Initialize a LocalInput with an Output Server.
+        public override bool Initialize(SnakeOnlineServer.ServerOutput ServerOut)
+        {
+            return false;
         }
 
         protected void KeyPress(object Sender, KeyPressEventArgs e)
@@ -39,6 +43,11 @@ namespace SnakeOnline
                     LastInput = MovementDirection.Right;
                     break;
             }
+        }
+
+        public void NetworkUpdate()
+        {
+            ServerInHandle.SendMovement((int)LastInput);
         }
     }
 }

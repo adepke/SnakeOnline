@@ -6,35 +6,28 @@ using System.Threading.Tasks;
 
 namespace SnakeOnline
 {
-    class NetworkedInput : Input
+    class NetworkedInput : Input, INetworkable
     {
-        public override bool Initialize()
-        {
-            return true;
-        }
+        private SnakeOnlineServer.ServerOutput ServerOutHandle;
 
-        public override bool Initialize(AppWindow WindowInst)
+        // Never Initialize a NetworkedInput with a Window Instance.
+        public override bool Initialize(SnakeOnlineServer.ServerInput ServerIn, AppWindow WindowInst)
         {
             return false;
         }
 
-        public void KeyPress(char Key)
+        public override bool Initialize(SnakeOnlineServer.ServerOutput ServerOut)
         {
-            switch (Key)
-            {
-                case 'w':
-                    LastInput = MovementDirection.Up;
-                    break;
-                case 'a':
-                    LastInput = MovementDirection.Left;
-                    break;
-                case 's':
-                    LastInput = MovementDirection.Down;
-                    break;
-                case 'd':
-                    LastInput = MovementDirection.Right;
-                    break;
-            }
+            return true;
+        }
+
+        public void NetworkUpdate()
+        {
+            int NewInput;
+
+            ServerOutHandle.GetMovement(out NewInput);
+
+            LastInput = (MovementDirection)NewInput;
         }
     }
 }

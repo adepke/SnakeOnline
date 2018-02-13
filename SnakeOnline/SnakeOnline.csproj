@@ -61,6 +61,7 @@
     <Compile Include="ItemSpawner.cs" />
     <Compile Include="LocalInput.cs" />
     <Compile Include="LocalItemSpawner.cs" />
+    <Compile Include="Networkable.cs" />
     <Compile Include="NetworkedInput.cs" />
     <Compile Include="NetworkedItemSpawner.cs" />
     <Compile Include="Program.cs" />
@@ -70,6 +71,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SnakeOnlineServer\SnakeOnlineServer.csproj">
+      <Project>{93a9ab74-4b96-4aa2-aa51-353901933cfb}</Project>
+      <Name>SnakeOnlineServer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

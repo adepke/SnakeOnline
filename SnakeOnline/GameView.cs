@@ -8,6 +8,9 @@ namespace SnakeOnline
 {
     class GameView
     {
+        public SnakeOnlineServer.ServerInput ServerIn;
+        public SnakeOnlineServer.ServerOutput ServerOut;
+
         public World WorldInst;
         public ItemSpawner ItemSpawnerInst;
         public Snake SnakeInst;
@@ -17,6 +20,8 @@ namespace SnakeOnline
 
         public bool Initialize(AppWindow Window, int WorldSizeX, int WorldSizeY)
         {
+            ServerIn = new SnakeOnlineServer.ServerInput();
+
             WorldInst = new World();
 
             if (!WorldInst.Initialize(WorldSizeX, WorldSizeY))
@@ -26,7 +31,7 @@ namespace SnakeOnline
 
             ItemSpawnerInst = new LocalItemSpawner();
 
-            if (!ItemSpawnerInst.Initialize(WorldInst))
+            if (!ItemSpawnerInst.Initialize(ServerIn, WorldInst))
             {
                 return false;
             }
@@ -40,7 +45,7 @@ namespace SnakeOnline
 
             InputInst = new LocalInput();
 
-            if (!InputInst.Initialize(Window))
+            if (!InputInst.Initialize(ServerIn, Window))
             {
                 return false;
             }
@@ -50,6 +55,8 @@ namespace SnakeOnline
 
         public bool InitializeNetworked(int WorldSizeX, int WorldSizeY)
         {
+            ServerOut = new SnakeOnlineServer.ServerOutput();
+
             WorldInst = new World();
 
             if (!WorldInst.Initialize(WorldSizeX, WorldSizeY))
@@ -59,7 +66,7 @@ namespace SnakeOnline
 
             ItemSpawnerInst = new NetworkedItemSpawner();
 
-            if (!ItemSpawnerInst.Initialize(WorldInst))
+            if (!ItemSpawnerInst.Initialize(ServerOut, WorldInst))
             {
                 return false;
             }
@@ -73,7 +80,7 @@ namespace SnakeOnline
 
             InputInst = new NetworkedInput();
 
-            if (!InputInst.Initialize())
+            if (!InputInst.Initialize(ServerOut))
             {
                 return false;
             }

@@ -20,7 +20,7 @@ namespace SnakeOnline
 
         public MovementDirection LastInput = DefaultInput;
 
-        public abstract bool Initialize();
-        public abstract bool Initialize(AppWindow Window);
+        public abstract bool Initialize(SnakeOnlineServer.ServerInput ServerIn, AppWindow Window);
+        public abstract bool Initialize(SnakeOnlineServer.ServerOutput ServerOut);
     }
 }

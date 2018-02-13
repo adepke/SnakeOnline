@@ -6,17 +6,26 @@ using System.Threading.Tasks;
 
 namespace SnakeOnline
 {
-    class LocalItemSpawner : ItemSpawner
+    class LocalItemSpawner : ItemSpawner, INetworkable
     {
+        private SnakeOnlineServer.ServerInput ServerInHandler;
+
         private Random RandomHandler;
 
-        public override bool Initialize(World WorldInst)
+        Point LastSpawn;
+
+        public override bool Initialize(SnakeOnlineServer.ServerInput ServerIn, World WorldInst)
         {
             this.WorldInst = WorldInst;
 
             RandomHandler = new Random();
 
             return true;
+        }
+
+        public override bool Initialize(SnakeOnlineServer.ServerOutput ServerOut, World WorldInst)
+        {
+            return false;
         }
 
         public override void SpawnNew()
@@ -49,6 +58,12 @@ namespace SnakeOnline
 
                             WorldInst.Set(2, NewPoint.Row, NewPoint.Column);
 
+                            Point Last;
+                            Last.Row = Row;
+                            Last.Column = Column;
+
+                            LastSpawn = Last;
+
                             break;
                         }
                     }
@@ -60,6 +75,12 @@ namespace SnakeOnline
             else
             {
                 WorldInst.Set(2, Row, Column);
+
+                Point Last;
+                Last.Row = Row;
+                Last.Column = Column;
+
+                LastSpawn = Last;
             }
         }
 
@@ -128,6 +149,11 @@ namespace SnakeOnline
             }
 
             return Result;
+        }
+
+        public void NetworkUpdate()
+        {
+            ServerInHandler.SendItemSpawn(LastSpawn.Row, LastSpawn.Column);
         }
     }
 }

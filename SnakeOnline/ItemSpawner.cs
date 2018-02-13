@@ -12,7 +12,8 @@ namespace SnakeOnline
 
         protected World WorldInst;
 
-        public abstract bool Initialize(World WorldInst);
+        public abstract bool Initialize(SnakeOnlineServer.ServerInput ServerIn, World WorldInst);
+        public abstract bool Initialize(SnakeOnlineServer.ServerOutput ServerOut, World WorldInst);
 
         public abstract void SpawnNew();
     }
