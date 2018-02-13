@@ -53,11 +53,17 @@ namespace SnakeOnline
             base.OnLoad(e);
 
             GL.ClearColor(Color.White);
-            
+
+#if DEBUG
             GridCellTexture = LoadTexture(@"../../../Assets/GridCell.png");
             SnakeCellTexture = LoadTexture(@"../../../Assets/SnakeCell.png");
             ItemCellTexture = LoadTexture(@"../../../Assets/ItemCell.png");
-            
+#else
+            GridCellTexture = LoadTexture(@"Assets/GridCell.png");
+            SnakeCellTexture = LoadTexture(@"Assets/SnakeCell.png");
+            ItemCellTexture = LoadTexture(@"Assets/ItemCell.png");
+#endif
+
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Blend);  // Enable Alpha Blending
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
