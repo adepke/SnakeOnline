@@ -130,13 +130,26 @@ namespace SnakeOnline
             //GL.PushMatrix();
 
             GL.Color4(Color.White);
-            
-            GL.BindTexture(TextureTarget.Texture2D, GridCellTexture);
         
             for (int Row = 0; Row < Rows; ++Row)
             {
                 for (int Column = 0; Column < Columns; ++Column)
                 {
+                    if ((int)WorldInst.Get(Row, Column) == 0)
+                    {
+                        GL.BindTexture(TextureTarget.Texture2D, GridCellTexture);
+                    }
+
+                    else if ((int)WorldInst.Get(Row, Column) == 1)
+                    {
+                        GL.BindTexture(TextureTarget.Texture2D, SnakeCellTexture);
+                    }
+
+                    else
+                    {
+                        GL.BindTexture(TextureTarget.Texture2D, ItemCellTexture);
+                    }
+
                     GL.Begin(PrimitiveType.Quads);
 
                     // Bottom Left

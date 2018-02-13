@@ -13,7 +13,7 @@ namespace SnakeOnline
 
             Manager.Initialize(Window, "Snake Online", new Size(800, 600));
 
-            Manager.Run(0.2d);
+            Manager.Run(0.15d);
             Window.Run(1.0d, 30.0d);
 
             Manager.Shutdown();
