@@ -105,7 +105,7 @@ namespace SnakeOnline
                 }
             }
 
-            catch (System.IO.FileNotFoundException e)
+            catch (System.IO.FileNotFoundException)
             {
                 return -1;
             }
