@@ -14,6 +14,8 @@ namespace SnakeOnline
         private Session GameSession;
 
         private GameView LocalView;
+        private GameView RemoteView;
+        
         private AppWindow Window;
 
         private Timer ClientGameLoop;
@@ -24,13 +26,6 @@ namespace SnakeOnline
             this.Window = Window;
             Window.Title = WindowTitle;
             Window.Size = WindowSize;
-
-            LocalView = new GameView();
-
-            if (!LocalView.Initialize(Window, 15, 15))
-            {
-                throw new Exception("Failed to Create Local Game");
-            }
 
             if (!Window.Initialize(LocalView.WorldInst, LocalView.SnakeInst))
             {
@@ -44,9 +39,16 @@ namespace SnakeOnline
             GameSession = new Session();
             GameSession.Type = Type;
 
+            LocalView = new GameView();
+
+            if (!LocalView.Initialize(Window, 15, 15))
+            {
+                throw new Exception("Failed to Create Local Game");
+            }
+
             if (GameSession.Type == SessionType.Multiplayer)
             {
-
+                RemoteView = new GameView();
             }
         }
 
@@ -70,7 +72,8 @@ namespace SnakeOnline
         {
             // Send and Receive World.
 
-            
+            GameSession.SendWorld(LocalView.WorldInst);
+            GameSession.ReceiveWorld(RemoteView.WorldInst);
         }
 
         protected void GameLoop(object Sender, ElapsedEventArgs e)
