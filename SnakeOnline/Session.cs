@@ -61,11 +61,13 @@ namespace SnakeOnline
         {
             string ConnectMessage = "CONNECT";
             
-            StringBuilder ConnectMessageBuilder = new StringBuilder(ConnectMessage, 32);
+            char[] ConnectMessageBuffer = new char[32];
+
+            ConnectMessageBuffer = ConnectMessage.ToCharArray();
 
             try
             {
-                SessionSocket.SendTo(Encoding.ASCII.GetBytes(ConnectMessageBuilder.ToString()), Remote);
+                SessionSocket.SendTo(Encoding.ASCII.GetBytes(ConnectMessageBuffer), Remote);
             }
 
             catch (SocketException e)
