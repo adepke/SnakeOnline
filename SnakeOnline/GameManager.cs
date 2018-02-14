@@ -112,6 +112,15 @@ namespace SnakeOnline
             {
                 LocalView.Tick();
             }
+
+            if (GameSession.Type == SessionType.Multiplayer)
+            {
+                // @todo: Implement Game Over Replication.
+                if (RemoteView.GameOver)
+                {
+                    Console.WriteLine("Remote Game Over");
+                }
+            }
         }
 
         public void Shutdown()

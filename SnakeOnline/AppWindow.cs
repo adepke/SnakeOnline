@@ -23,8 +23,8 @@ namespace SnakeOnline
         private int Rows;
         private int Columns;
 
-        private int RowWidth;
-        private int RowHeight;
+        private int RowWidth = 25;
+        private int RowHeight = 25;
 
         private World LocalWorldInst;
         private World RemoteWorldInst;
@@ -36,6 +36,9 @@ namespace SnakeOnline
 
         public bool Initialize(int Rows, int Columns)
         {
+            this.Rows = Rows;
+            this.Columns = Columns;
+
             RenderHandler = new Gwen.Renderer.OpenTK();
             BaseSkin = new Gwen.Skin.TexturedBase(RenderHandler, "DefaultSkin.png");
 
