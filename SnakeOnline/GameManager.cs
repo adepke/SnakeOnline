@@ -37,7 +37,6 @@ namespace SnakeOnline
             {
                 throw new Exception("Failed to Initialize Window");
             }
-
         }
 
         public void StartSession(SessionType Type)
