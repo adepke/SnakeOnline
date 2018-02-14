@@ -20,6 +20,8 @@ namespace SnakeOnline
 
         private Socket SessionSocket;
 
+        private IPEndPoint Remote;
+
         private byte[] WorldInstSerialized;
 
         private int Rows;
@@ -30,14 +32,14 @@ namespace SnakeOnline
             try
             {
                 SessionSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-                SessionSocket.Connect(EndPoint);
             }
 
             catch (Exception)
             {
                 return false;
             }
+
+            Remote = EndPoint;
 
             WorldInstSerialized = new byte[WorldRows * WorldColumns];
 
@@ -51,13 +53,13 @@ namespace SnakeOnline
         {
             Buffer.BlockCopy(WorldInst.ItemMatrix, 0, WorldInstSerialized, 0, Rows * Columns);
 
-            SessionSocket.Send(WorldInstSerialized);
+            SessionSocket.SendTo(WorldInstSerialized, Remote);
         }
 
         // Blocking Call
         internal void ReceiveWorld(World WorldInst)
         {
-            SessionSocket.Receive(WorldInstSerialized);
+            SessionSocket.Receive(WorldInstSerialized, Rows * Columns, SocketFlags.None);
 
             for (int Iter = 0; Iter < WorldInstSerialized.Length; ++Iter)
             {

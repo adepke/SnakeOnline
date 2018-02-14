@@ -6,29 +6,28 @@ namespace SnakeOnlineServer
 {
     class Program
     {
-        private static Socket[] ClientSockets;
+        private static Socket ServerSocket;
 
         static void Main(string[] args)
         {
-            Console.WriteLine("SnakeOnline Dedicated Server\n");
+            Console.WriteLine("SnakeOnline P2P Presider Server\n");
 
             Console.WriteLine("Host Name: " + Dns.GetHostName() + "\n");
 
-            ClientSockets[0] = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            ClientSockets[1] = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            ClientSockets[0].Blocking = true;
-            ClientSockets[1].Blocking = true;
+            ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            ServerSocket.Blocking = true;
 
-            // Listen Until Client 0 Connects.
-            ClientSockets[0].Listen(256);
+            IPEndPoint LocalEndPoint = new IPEndPoint(IPAddress.Any, 735);
 
-            // Listen Until Client 1 Connects.
-            ClientSockets[1].Listen(256);
+            ServerSocket.Bind(LocalEndPoint);
 
             const int WorldRows = 15;
             const int WorldColumns = 15;
 
             byte[] DataBuffer = new byte[WorldRows * WorldColumns];
+
+            // Disabled While Testing P2PPresider Server
+            /*
 
             // Swap Buffers Between Clients Endlessly.
             while (true)
@@ -49,6 +48,8 @@ namespace SnakeOnlineServer
 
                 Console.WriteLine("Sent     {0} Bytes to Client A at   {1}:{2}", DataBuffer.Length, ((IPEndPoint)ClientSockets[0].RemoteEndPoint).Address, ((IPEndPoint)ClientSockets[0].RemoteEndPoint).Port);
             }
+
+            */
         }
     }
 }
