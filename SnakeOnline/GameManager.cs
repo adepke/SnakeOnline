@@ -8,12 +8,17 @@ using System.Drawing;
 using OpenTK;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace SnakeOnline
 {
     class GameManager
     {
+        private bool Running = false;
+
         private Session GameSession;
+
+        private bool SessionReady = false;
 
         private SessionType RequestedSessionType;
         private IPEndPoint RequestedEndPoint;
@@ -27,8 +32,8 @@ namespace SnakeOnline
 
         internal AppWindow Window;
 
-        private Timer ClientGameLoop;
-        private Timer NetworkUpdateLoop;
+        private System.Timers.Timer ClientGameLoop;
+        private System.Timers.Timer NetworkUpdateLoop;
 
         public void Initialize(double GameUpdateRate, int WorldRows, int WorldColumns, string WindowTitle, Size WindowSize)
         {
@@ -36,15 +41,30 @@ namespace SnakeOnline
             Rows = WorldRows;
             Columns = WorldColumns;
 
-            Window = new AppWindow();
-            Window.Title = WindowTitle;
-            Window.Size = WindowSize;
-            Window.TargetUpdateFrequency = 1.0d;
-
-            if (!Window.Initialize(Rows, Columns))
+            Thread WindowThread = new Thread(() =>
             {
-                throw new Exception("Failed to Initialize Window");
-            }
+                Window = new AppWindow();
+                Window.Title = WindowTitle;
+                Window.Size = WindowSize;
+                Window.TargetUpdateFrequency = 1.0d;
+
+                if (!Window.Initialize(Rows, Columns))
+                {
+                    throw new Exception("Failed to Initialize Window");
+                }
+
+                Window.Run();
+            });
+
+            WindowThread.Start();
+
+            // Wait Until Window's Memory is Initialized.
+            while (Window == null) { }
+
+            // Wait Until Window is Ready for Usage.
+            while (!Window.Ready) { }
+
+            Window.SetupNetworkedSessionMenu();
         }
 
         public void RequestNewSession()
@@ -96,30 +116,52 @@ namespace SnakeOnline
             return true;
         }
 
-        // Run the Current Session.
         public void Run()
         {
-            LocalView.Spawn();
+            Running = true;
 
-            Window.SetupLocal(LocalView.WorldInst, LocalView.SnakeInst);
-
-            if (GameSession.Type == SessionType.Multiplayer)
+            while (Running)
             {
-                Window.SetupRemote(RemoteView.WorldInst);
-            }
+                if (SessionReady)
+                {
+                    LocalView.Spawn();
 
-            if (GameSession.Type == SessionType.Multiplayer)
-            {
-                NetworkUpdateLoop = new Timer(500.0d);
-                NetworkUpdateLoop.AutoReset = true;
-                NetworkUpdateLoop.Elapsed += new ElapsedEventHandler(NetworkUpdate);
-                NetworkUpdateLoop.Enabled = true;
-            }
+                    Window.SetupLocal(LocalView.WorldInst, LocalView.SnakeInst);
 
-            ClientGameLoop = new Timer(UpdateRate * 1000d);
-            ClientGameLoop.AutoReset = true;
-            ClientGameLoop.Elapsed += new ElapsedEventHandler(GameLoop);
-            ClientGameLoop.Enabled = true;
+                    if (GameSession.Type == SessionType.Multiplayer)
+                    {
+                        Window.SetupRemote(RemoteView.WorldInst);
+                    }
+
+                    if (GameSession.Type == SessionType.Multiplayer)
+                    {
+                        NetworkUpdateLoop = new System.Timers.Timer(500.0d);
+                        NetworkUpdateLoop.AutoReset = true;
+                        NetworkUpdateLoop.Elapsed += new ElapsedEventHandler(NetworkUpdate);
+                        NetworkUpdateLoop.Enabled = true;
+                    }
+
+                    ClientGameLoop = new System.Timers.Timer(UpdateRate * 1000d);
+                    ClientGameLoop.AutoReset = true;
+                    ClientGameLoop.Elapsed += new ElapsedEventHandler(GameLoop);
+                    ClientGameLoop.Enabled = true;
+
+                    Window.IsInSession = true;
+                }
+
+                else
+                {
+                    // Loop Until a Valid Session is Ready.
+                    while (!SessionReady)
+                    {
+                        RequestNewSession();
+
+                        StartSession();
+
+                        SessionReady = ConnectSession();
+                    }
+                }
+            }
         }
 
         protected void NetworkUpdate(object Sender, ElapsedEventArgs e)

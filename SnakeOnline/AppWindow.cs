@@ -13,11 +13,22 @@ namespace SnakeOnline
 {
     class AppWindow : GameWindow
     {
-        private SessionType GameType;
+        public bool Ready = false;
+
+        public bool IsInSession = false;
 
         private Gwen.Renderer.OpenTK RenderHandler;
         private Gwen.Skin.Base BaseSkin;
         private Gwen.Control.Canvas BaseCanvas;
+
+        private Gwen.Control.Canvas SessionMenuCanvas;
+
+        private Gwen.Control.Canvas NetworkedSessionMenuCanvas;
+
+        Gwen.Control.TextBox CustomServerAddress;
+        Gwen.Control.TextBox CustomServerPort;
+
+        private bool SessionInterfaceIsOpen = false;
 
         private Gwen.Control.TextBox LocalSizeBox;
 
@@ -41,24 +52,74 @@ namespace SnakeOnline
             this.Columns = Columns;
 
             RenderHandler = new Gwen.Renderer.OpenTK();
-            BaseSkin = new Gwen.Skin.TexturedBase(RenderHandler, "DefaultSkin.png");
 
+            BaseSkin = new Gwen.Skin.TexturedBase(RenderHandler, "DefaultSkin.png");
             BaseSkin.DefaultFont = new Gwen.Font(RenderHandler, "Arial", 10);
 
             BaseCanvas = new Gwen.Control.Canvas(BaseSkin);
-
             BaseCanvas.SetSize(Width, Height);
             BaseCanvas.ShouldDrawBackground = true;
             BaseCanvas.BackgroundColor = Color.White;
 
+            NetworkedSessionMenuCanvas = new Gwen.Control.Canvas(BaseSkin);
+            NetworkedSessionMenuCanvas.SetSize((int)Math.Floor(Width * 0.8d), (int)Math.Floor(Height * 0.8d));
+            NetworkedSessionMenuCanvas.ShouldDrawBackground = true;
+            NetworkedSessionMenuCanvas.BackgroundColor = Color.Green;
+
+            Ready = true;
+
             return true;
         }
 
-        public void SessionInterface(out SessionType RequestedSessionType, out System.Net.IPEndPoint RequestedEndPoint)
+        public void SessionInterface(out SessionType RequestedSessionType, out IPEndPoint RequestedEndPoint)
         {
+            SessionInterfaceIsOpen = true;
+
             RequestedSessionType = SessionType.Multiplayer;
 
             RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 735);
+
+            // Stall Calling Thread Until the Interface is Closed.
+            while (SessionInterfaceIsOpen)
+            {
+            }
+
+            //RequestedSessionType = 
+        }
+
+        public void SetupNetworkedSessionMenu()
+        {
+            Gwen.Control.ComboBox ServerSelector = new Gwen.Control.ComboBox(NetworkedSessionMenuCanvas);
+            ServerSelector.AddItem("Server A");
+            ServerSelector.AddItem("Server B");
+            ServerSelector.AddItem("Server C");
+            ServerSelector.AddItem("Server D");
+            ServerSelector.AddItem("Server E");
+            ServerSelector.AddItem("Server F");
+            ServerSelector.AddItem("Server G");
+            ServerSelector.AddItem("Server H");
+            ServerSelector.AddItem("Server I");
+            ServerSelector.AddItem("Server J");
+            ServerSelector.AddItem("Custom Server...");
+
+            Gwen.Control.Label CustomServerLabel = new Gwen.Control.Label(NetworkedSessionMenuCanvas);
+            CustomServerLabel.SetText("Address       Port");
+            CustomServerLabel.AutoSizeToContents = true;
+            CustomServerLabel.SetPosition(50, 300);
+
+            CustomServerAddress = new Gwen.Control.TextBox(NetworkedSessionMenuCanvas);
+            CustomServerAddress.SetSize(200, 30);
+            CustomServerAddress.SetPosition(50, 320);
+
+            CustomServerPort = new Gwen.Control.TextBox(NetworkedSessionMenuCanvas);
+            CustomServerPort.SetSize(100, 30);
+            CustomServerPort.SetPosition(390, 320);
+
+            Gwen.Control.Button SessionConnect = new Gwen.Control.Button(NetworkedSessionMenuCanvas);
+            SessionConnect.SetText("Connect");
+            SessionConnect.SetSize(200, 50);
+            SessionConnect.SetPosition(300, 400);
+            SessionConnect.Clicked += (B, Args) => { SessionInterfaceIsOpen = false; };
         }
 
         public void SetupLocal(World LocalWorldInst, Snake LocalSnakeInst)
@@ -257,11 +318,19 @@ namespace SnakeOnline
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            DrawLocalUI();
+            if (IsInSession)
+            {
+                DrawLocalUI();
 
-            BaseCanvas.RenderCanvas();
+                BaseCanvas.RenderCanvas();
 
-            DrawLocalGame();
+                DrawLocalGame();
+            }
+
+            else if (SessionInterfaceIsOpen)
+            {
+                NetworkedSessionMenuCanvas.RenderCanvas();
+            }
 
             GL.Flush();
 
