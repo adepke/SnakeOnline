@@ -14,11 +14,11 @@ namespace SnakeOnline
         private int Rows;
         private int Columns;
 
-        internal int[,] ItemMatrix;
+        internal byte[,] ItemMatrix;
 
         public bool Initialize(int Rows, int Columns)
         {
-            ItemMatrix = new int[Rows, Columns];
+            ItemMatrix = new byte[Rows, Columns];
 
             this.Rows = Rows;
             this.Columns = Columns;
@@ -57,7 +57,7 @@ namespace SnakeOnline
             return ItemMatrix[Row, Column];
         }
 
-        public bool Set(int Value, int Row, int Column)
+        public bool Set(byte Value, int Row, int Column)
         {
             if (!IsValidIndex(Row, Column))
                 return false;
@@ -65,11 +65,6 @@ namespace SnakeOnline
             ItemMatrix[Row, Column] = Value;
 
             return true;
-        }
-
-        public void ConstructFromNetwork(SnakeOnlineServer.ServerOutput ServerOut)
-        {
-            ServerOut.GetWorld(out Rows, out Columns, out ItemMatrix);
         }
     }
 }

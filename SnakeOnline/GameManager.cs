@@ -11,6 +11,8 @@ namespace SnakeOnline
 {
     class GameManager
     {
+        private Session GameSession;
+
         private GameView LocalView;
         private AppWindow Window;
 
@@ -24,10 +26,7 @@ namespace SnakeOnline
             Window.Size = WindowSize;
 
             LocalView = new GameView();
-        }
 
-        public void Run(double UpdateRate)
-        {
             if (!LocalView.Initialize(Window, 15, 15))
             {
                 throw new Exception("Failed to Create Local Game");
@@ -38,11 +37,22 @@ namespace SnakeOnline
                 throw new Exception("Failed to Initialize Window");
             }
 
-            LocalView.Run(UpdateRate);
+        }
 
-            // Exchange Worlds
-            LocalView.ServerIn.SendWorld(LocalView.WorldInst.GetRows(), LocalView.WorldInst.GetColumns(), LocalView.WorldInst.ItemMatrix);
-            LocalView.WorldInst.ConstructFromNetwork(LocalView.ServerOut);
+        public void StartSession(SessionType Type)
+        {
+            GameSession = new Session();
+            GameSession.Type = Type;
+
+            if (GameSession.Type == SessionType.Multiplayer)
+            {
+
+            }
+        }
+
+        public void Run(double UpdateRate)
+        {
+            LocalView.Run(UpdateRate);
 
             NetworkUpdateLoop = new Timer(500.0d);
             NetworkUpdateLoop.AutoReset = true;
@@ -58,8 +68,9 @@ namespace SnakeOnline
 
         protected void NetworkUpdate(object Sender, ElapsedEventArgs e)
         {
-            LocalView.InputInst.NetworkUpdate();
-            LocalView.ItemSpawnerInst.NetworkUpdate();
+            // Send and Receive World.
+
+            
         }
 
         protected void GameLoop(object Sender, ElapsedEventArgs e)

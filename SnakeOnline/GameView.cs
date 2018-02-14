@@ -8,9 +8,6 @@ namespace SnakeOnline
 {
     class GameView
     {
-        public SnakeOnlineServer.ServerInput ServerIn;
-        public SnakeOnlineServer.ServerOutput ServerOut;
-
         public World WorldInst;
         public ItemSpawner ItemSpawnerInst;
         public Snake SnakeInst;
@@ -20,9 +17,6 @@ namespace SnakeOnline
 
         public bool Initialize(AppWindow Window, int WorldSizeX, int WorldSizeY)
         {
-            ServerIn = new SnakeOnlineServer.ServerInput();
-            ServerOut = new SnakeOnlineServer.ServerOutput();
-
             WorldInst = new World();
 
             if (!WorldInst.Initialize(WorldSizeX, WorldSizeY))
@@ -30,9 +24,9 @@ namespace SnakeOnline
                 return false;
             }
 
-            ItemSpawnerInst = new LocalItemSpawner();
+            ItemSpawnerInst = new ItemSpawner();
 
-            if (!ItemSpawnerInst.Initialize(ServerIn, WorldInst))
+            if (!ItemSpawnerInst.Initialize(WorldInst))
             {
                 return false;
             }
@@ -44,9 +38,9 @@ namespace SnakeOnline
                 return false;
             }
 
-            InputInst = new LocalInput();
+            InputInst = new Input();
 
-            if (!InputInst.Initialize(ServerIn, Window))
+            if (!InputInst.Initialize(Window))
             {
                 return false;
             }
@@ -56,33 +50,9 @@ namespace SnakeOnline
 
         public bool InitializeNetworked(int WorldSizeX, int WorldSizeY)
         {
-            ServerIn = new SnakeOnlineServer.ServerInput();
-            ServerOut = new SnakeOnlineServer.ServerOutput();
-
             WorldInst = new World();
 
             if (!WorldInst.Initialize(WorldSizeX, WorldSizeY))
-            {
-                return false;
-            }
-
-            ItemSpawnerInst = new NetworkedItemSpawner();
-
-            if (!ItemSpawnerInst.Initialize(ServerOut, WorldInst))
-            {
-                return false;
-            }
-
-            SnakeInst = new Snake();
-
-            if (!SnakeInst.Initialize(WorldInst, ItemSpawnerInst))
-            {
-                return false;
-            }
-
-            InputInst = new NetworkedInput();
-
-            if (!InputInst.Initialize(ServerOut))
             {
                 return false;
             }
