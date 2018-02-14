@@ -12,24 +12,30 @@ namespace SnakeOnline
 {
     class AppWindow : GameWindow
     {
+        private SessionType GameType;
+
         private Gwen.Renderer.OpenTK RenderHandler;
         private Gwen.Skin.Base BaseSkin;
         private Gwen.Control.Canvas BaseCanvas;
 
-        private Gwen.Control.TextBox SizeBox;
+        private Gwen.Control.TextBox LocalSizeBox;
 
-        private World WorldInst;
-        private Snake SnakeInst;
+        private int Rows;
+        private int Columns;
+
+        private int RowWidth;
+        private int RowHeight;
+
+        private World LocalWorldInst;
+        private World RemoteWorldInst;
+        private Snake LocalSnakeInst;
 
         private int GridCellTexture;
         private int SnakeCellTexture;
         private int ItemCellTexture;
 
-        public bool Initialize(World WorldInst, Snake SnakeInst)
+        public bool Initialize(int Rows, int Columns)
         {
-            this.WorldInst = WorldInst;
-            this.SnakeInst = SnakeInst;
-
             RenderHandler = new Gwen.Renderer.OpenTK();
             BaseSkin = new Gwen.Skin.TexturedBase(RenderHandler, "DefaultSkin.png");
 
@@ -41,11 +47,98 @@ namespace SnakeOnline
             BaseCanvas.ShouldDrawBackground = true;
             BaseCanvas.BackgroundColor = Color.White;
 
-            SizeBox = new Gwen.Control.TextBox(BaseCanvas);
-            SizeBox.TextColor = Color.Black;
-            SizeBox.SetPosition(0, WorldInst.GetRows() * 25);
-
             return true;
+        }
+
+        public SessionType SessionInterface()
+        {
+            return SessionType.Singleplayer;
+        }
+
+        public void SetupLocal(World LocalWorldInst, Snake LocalSnakeInst)
+        {
+            this.LocalWorldInst = LocalWorldInst;
+            this.LocalSnakeInst = LocalSnakeInst;
+
+            LocalSizeBox = new Gwen.Control.TextBox(BaseCanvas);
+            LocalSizeBox.TextColor = Color.Black;
+            LocalSizeBox.SetPosition(0, Rows * RowHeight);
+        }
+
+        // @todo: Add RemoteSnakeInst
+        public void SetupRemote(World RemoteWorldInst)
+        {
+            this.RemoteWorldInst = RemoteWorldInst;
+        }
+
+        public void DrawLocalUI()
+        {
+            LocalSizeBox.Text = "Size: " + LocalSnakeInst.GetSize();
+            LocalSizeBox.SizeToContents();
+        }
+
+        public void DrawLocalGame()
+        {
+            //GL.MatrixMode(MatrixMode.Projection);
+            //GL.LoadIdentity();
+            //GL.PushMatrix();
+
+            GL.Color4(Color.White);
+
+            for (int Row = 0; Row < Rows; ++Row)
+            {
+                for (int Column = 0; Column < Columns; ++Column)
+                {
+                    if ((int)LocalWorldInst.Get(Row, Column) == 0)
+                    {
+                        GL.BindTexture(TextureTarget.Texture2D, GridCellTexture);
+                    }
+
+                    else if ((int)LocalWorldInst.Get(Row, Column) == 1)
+                    {
+                        GL.BindTexture(TextureTarget.Texture2D, SnakeCellTexture);
+                    }
+
+                    else
+                    {
+                        GL.BindTexture(TextureTarget.Texture2D, ItemCellTexture);
+                    }
+
+                    GL.Begin(PrimitiveType.Quads);
+
+                    // Bottom Left
+                    GL.TexCoord2(0f, 1f);
+                    GL.Vertex2(Column * 25, Row * 25);
+
+                    // Bottom Right
+                    GL.TexCoord2(1f, 1f);
+                    GL.Vertex2(Column * 25 + 25, Row * 25);
+
+                    // Top Right
+                    GL.TexCoord2(1f, 0f);
+                    GL.Vertex2(Column * 25 + 25, Row * 25 + 25);
+
+                    // Top Left
+                    GL.TexCoord2(0f, 0f);
+                    GL.Vertex2(Column * 25, Row * 25 + 25);
+
+                    GL.End();
+                }
+            }
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+
+            //GL.PopMatrix();
+        }
+
+        public void DrawRemoteUI()
+        {
+
+        }
+
+        public void DrawRemoteGame()
+        {
+
         }
 
         protected override void OnLoad(EventArgs e)
@@ -152,72 +245,17 @@ namespace SnakeOnline
             return Texture;
         }
 
-        protected void DrawGrid(int Rows, int Columns)
-        {
-            //GL.MatrixMode(MatrixMode.Projection);
-            //GL.LoadIdentity();
-            //GL.PushMatrix();
-
-            GL.Color4(Color.White);
-        
-            for (int Row = 0; Row < Rows; ++Row)
-            {
-                for (int Column = 0; Column < Columns; ++Column)
-                {
-                    if ((int)WorldInst.Get(Row, Column) == 0)
-                    {
-                        GL.BindTexture(TextureTarget.Texture2D, GridCellTexture);
-                    }
-
-                    else if ((int)WorldInst.Get(Row, Column) == 1)
-                    {
-                        GL.BindTexture(TextureTarget.Texture2D, SnakeCellTexture);
-                    }
-
-                    else
-                    {
-                        GL.BindTexture(TextureTarget.Texture2D, ItemCellTexture);
-                    }
-
-                    GL.Begin(PrimitiveType.Quads);
-
-                    // Bottom Left
-                    GL.TexCoord2(0f, 1f);
-                    GL.Vertex2(Column * 25, Row * 25);
-                    
-                    // Bottom Right
-                    GL.TexCoord2(1f, 1f);
-                    GL.Vertex2(Column * 25 + 25, Row * 25);
-                    
-                    // Top Right
-                    GL.TexCoord2(1f, 0f);
-                    GL.Vertex2(Column * 25 + 25, Row * 25 + 25);
-                    
-                    // Top Left
-                    GL.TexCoord2(0f, 0f);
-                    GL.Vertex2(Column * 25, Row * 25 + 25);
-                    
-                    GL.End();
-                }
-            }
-            
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-            
-            //GL.PopMatrix();
-        }
-
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            SizeBox.Text = "Size: " + SnakeInst.GetSize();
-            SizeBox.SizeToContents();
+            DrawLocalUI();
 
             BaseCanvas.RenderCanvas();
 
-            DrawGrid(WorldInst.GetRows(), WorldInst.GetColumns());
+            DrawLocalGame();
 
             GL.Flush();
 

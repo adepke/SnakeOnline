@@ -15,11 +15,11 @@ namespace SnakeOnline
 
         public bool GameOver = false;
 
-        public bool Initialize(AppWindow Window, int WorldSizeX, int WorldSizeY)
+        public bool Initialize(AppWindow Window, int WorldRows, int WorldColumns)
         {
             WorldInst = new World();
 
-            if (!WorldInst.Initialize(WorldSizeX, WorldSizeY))
+            if (!WorldInst.Initialize(WorldRows, WorldColumns))
             {
                 return false;
             }
@@ -48,11 +48,11 @@ namespace SnakeOnline
             return true;
         }
 
-        public bool InitializeNetworked(int WorldSizeX, int WorldSizeY)
+        public bool InitializeNetworked(int WorldRows, int WorldColumns)
         {
             WorldInst = new World();
 
-            if (!WorldInst.Initialize(WorldSizeX, WorldSizeY))
+            if (!WorldInst.Initialize(WorldRows, WorldColumns))
             {
                 return false;
             }
@@ -60,7 +60,7 @@ namespace SnakeOnline
             return true;
         }
 
-        public void Run(double UpdateRate)
+        public void Spawn()
         {
             ItemSpawnerInst.SpawnNew();
 

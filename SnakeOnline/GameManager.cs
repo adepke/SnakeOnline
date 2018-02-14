@@ -16,27 +16,35 @@ namespace SnakeOnline
         private GameView LocalView;
         private GameView RemoteView;
 
+        private double UpdateRate;
         private int Rows;
         private int Columns;
 
-        private AppWindow Window;
+        internal AppWindow Window;
 
         private Timer ClientGameLoop;
         private Timer NetworkUpdateLoop;
 
-        public void Initialize(int WorldRows, int WorldColumns, AppWindow Window, string WindowTitle, Size WindowSize)
+        public void Initialize(double GameUpdateRate, int WorldRows, int WorldColumns, string WindowTitle, Size WindowSize)
         {
+            UpdateRate = GameUpdateRate;
             Rows = WorldRows;
             Columns = WorldColumns;
 
-            this.Window = Window;
+            Window = new AppWindow();
             Window.Title = WindowTitle;
             Window.Size = WindowSize;
+            Window.TargetUpdateFrequency = 1.0d;
 
-            if (!Window.Initialize(LocalView.WorldInst, LocalView.SnakeInst))
+            if (!Window.Initialize(Rows, Columns))
             {
                 throw new Exception("Failed to Initialize Window");
             }
+        }
+
+        public SessionType RequestSessionType()
+        {
+            return Window.SessionInterface();
         }
 
         public void StartSession(SessionType Type)
@@ -55,16 +63,24 @@ namespace SnakeOnline
             {
                 RemoteView = new GameView();
 
-                if (!RemoteView.Initialize(Window, Rows, Columns))
+                if (!RemoteView.InitializeNetworked(Rows, Columns))
                 {
-                    throw new Exception("Failed to Create Local Game");
+                    throw new Exception("Failed to Create Remote Game");
                 }
             }
         }
 
-        public void Run(double UpdateRate)
+        // Run the Current Session.
+        public void Run()
         {
-            LocalView.Run(UpdateRate);
+            LocalView.Spawn();
+
+            Window.SetupLocal(LocalView.WorldInst, LocalView.SnakeInst);
+
+            if (GameSession.Type == SessionType.Multiplayer)
+            {
+                Window.SetupRemote(RemoteView.WorldInst);
+            }
 
             NetworkUpdateLoop = new Timer(500.0d);
             NetworkUpdateLoop.AutoReset = true;
@@ -72,7 +88,6 @@ namespace SnakeOnline
             NetworkUpdateLoop.Enabled = true;
 
             ClientGameLoop = new Timer(UpdateRate * 1000d);
-
             ClientGameLoop.AutoReset = true;
             ClientGameLoop.Elapsed += new ElapsedEventHandler(GameLoop);
             ClientGameLoop.Enabled = true;
@@ -80,8 +95,8 @@ namespace SnakeOnline
 
         protected void NetworkUpdate(object Sender, ElapsedEventArgs e)
         {
-            GameSession.SendWorld(LocalView.WorldInst);
-            GameSession.ReceiveWorld(RemoteView.WorldInst);
+            //GameSession.SendWorld(LocalView.WorldInst);
+            //GameSession.ReceiveWorld(RemoteView.WorldInst);
         }
 
         protected void GameLoop(object Sender, ElapsedEventArgs e)

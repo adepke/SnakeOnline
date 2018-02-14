@@ -7,13 +7,15 @@ namespace SnakeOnline
     {
         public static void Main()
         {
-            AppWindow Window = new AppWindow();
-
             GameManager Manager = new GameManager();
 
-            Manager.Initialize(15, 15, Window, "Snake Online", new Size(800, 600));
+            Manager.Initialize(0.15d, 15, 15, "Snake Online", new Size(800, 600));
 
-            Window.Run(1.0d, 30.0d);
+            Manager.StartSession(Manager.RequestSessionType());
+
+            Manager.Run();
+
+            Manager.Window.Run();
 
             Manager.Shutdown();
         }
