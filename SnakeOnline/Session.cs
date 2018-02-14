@@ -59,7 +59,17 @@ namespace SnakeOnline
         {
             string ConnectMessage = "CONNECT";
 
-            SessionSocket.SendTo(Encoding.ASCII.GetBytes(ConnectMessage), Remote);
+            try
+            {
+                SessionSocket.SendTo(Encoding.ASCII.GetBytes(ConnectMessage), Remote);
+            }
+
+            catch (SocketException e)
+            {
+                Console.WriteLine("Connection Failure: " + e.Message);
+
+                return false;
+            }
 
             byte[] PartnerSerialized = new byte[64];
 

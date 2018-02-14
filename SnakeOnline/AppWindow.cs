@@ -58,7 +58,7 @@ namespace SnakeOnline
         {
             RequestedSessionType = SessionType.Multiplayer;
 
-            RequestedEndPoint = new IPEndPoint(IPAddress.Parse("67.166.8.31"), 735);
+            RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 735);
         }
 
         public void SetupLocal(World LocalWorldInst, Snake LocalSnakeInst)
