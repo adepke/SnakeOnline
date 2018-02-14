@@ -11,7 +11,7 @@ namespace SnakeOnline
 
             GameManager Manager = new GameManager();
 
-            Manager.Initialize(Window, "Snake Online", new Size(800, 600));
+            Manager.Initialize(15, 15, Window, "Snake Online", new Size(800, 600));
 
             Window.Run(1.0d, 30.0d);
 
