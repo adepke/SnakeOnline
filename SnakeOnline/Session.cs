@@ -32,12 +32,18 @@ namespace SnakeOnline
             try
             {
                 SessionSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+                IPEndPoint LocalEndPoint = new IPEndPoint(IPAddress.Any, 306);
+
+                SessionSocket.Bind(LocalEndPoint);
             }
 
             catch (Exception)
             {
                 return false;
             }
+
+            SessionSocket.ReceiveTimeout = 10000;
 
             Remote = EndPoint;
 
@@ -47,6 +53,48 @@ namespace SnakeOnline
             Columns = WorldColumns;
 
             return true;
+        }
+
+        public bool Connect()
+        {
+            string ConnectMessage = "CONNECT";
+
+            SessionSocket.SendTo(Encoding.ASCII.GetBytes(ConnectMessage), Remote);
+
+            byte[] PartnerSerialized = new byte[64];
+
+            try
+            {
+                SessionSocket.Receive(PartnerSerialized, 64, SocketFlags.None);
+            }
+
+            catch (SocketException e)
+            {
+                Console.WriteLine("Connection Failure: " + e.Message);
+
+                return false;
+            }
+
+            string Partner = Encoding.ASCII.GetString(PartnerSerialized);
+
+            if (Partner.Substring(0, 4) != "PEER")
+            {
+                return false;
+            }
+
+            string PartnerAddress = Partner.Substring(3);
+
+            for (int Iter = 0; Iter < PartnerAddress.Length; ++Iter)
+            {
+                if (PartnerAddress[Iter] == ':')
+                {
+                    Remote = new IPEndPoint(IPAddress.Parse(PartnerAddress.Substring(0, Iter)), Int32.Parse(PartnerAddress.Substring(Iter + 1)));
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         internal void SendWorld(World WorldInst)

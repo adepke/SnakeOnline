@@ -14,6 +14,8 @@ namespace SnakeOnline
             Manager.RequestNewSession();
             Manager.StartSession();
 
+            Manager.ConnectSession();  // This is Blocking to the Game Thread, Consider Adding UI Loading Screen? Timeout after 10 Seconds.
+
             Manager.Run();
 
             Manager.Window.Run();

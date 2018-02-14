@@ -56,7 +56,7 @@ namespace SnakeOnline
 
         public void SessionInterface(out SessionType RequestedSessionType, out System.Net.IPEndPoint RequestedEndPoint)
         {
-            RequestedSessionType = SessionType.Singleplayer;
+            RequestedSessionType = SessionType.Multiplayer;
 
             RequestedEndPoint = new IPEndPoint(IPAddress.Parse("67.166.8.31"), 735);
         }

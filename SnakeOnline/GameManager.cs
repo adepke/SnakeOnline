@@ -83,6 +83,19 @@ namespace SnakeOnline
             }
         }
 
+        public bool ConnectSession()
+        {
+            if (GameSession.Type == SessionType.Multiplayer)
+            {
+                if (!GameSession.Connect())
+                {
+                    Console.WriteLine("Failed to Connect to Presider Server");
+                }
+            }
+
+            return true;
+        }
+
         // Run the Current Session.
         public void Run()
         {
