@@ -38,8 +38,10 @@ namespace SnakeOnline
                 SessionSocket.Bind(LocalEndPoint);
             }
 
-            catch (Exception)
+            catch (SocketException e)
             {
+                Console.WriteLine("Session Creation Error: " + e.Message);
+
                 return false;
             }
 
@@ -129,7 +131,6 @@ namespace SnakeOnline
 
         public void Dispose()
         {
-            SessionSocket.Disconnect(false);
             SessionSocket.Dispose();
         }
     }

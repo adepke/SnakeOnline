@@ -80,10 +80,16 @@ namespace SnakeOnline
 
             RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 735);
 
+            /*
+
             // Stall Calling Thread Until the Interface is Closed.
             while (SessionInterfaceIsOpen)
             {
             }
+
+            */
+
+            SessionInterfaceIsOpen = false;
 
             //RequestedSessionType = 
         }

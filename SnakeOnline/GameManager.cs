@@ -109,7 +109,9 @@ namespace SnakeOnline
             {
                 if (!GameSession.Connect())
                 {
-                    Console.WriteLine("Failed to Connect to Presider Server");
+                    Console.WriteLine("\nFailed to Connect to Presider Server\n");
+
+                    return false;
                 }
             }
 
@@ -159,6 +161,11 @@ namespace SnakeOnline
                         StartSession();
 
                         SessionReady = ConnectSession();
+
+                        if (!SessionReady)
+                        {
+                            GameSession.Dispose();
+                        }
                     }
                 }
             }
