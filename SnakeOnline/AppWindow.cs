@@ -63,7 +63,8 @@ namespace SnakeOnline
 
             NetworkedSessionMenuCanvas = new Gwen.Control.Canvas(BaseSkin);
             NetworkedSessionMenuCanvas.SetSize((int)Math.Floor(Width * 0.8d), (int)Math.Floor(Height * 0.8d));
-            NetworkedSessionMenuCanvas.ShouldDrawBackground = true;
+            NetworkedSessionMenuCanvas.SetPosition(50, 50);
+            NetworkedSessionMenuCanvas.ShouldDrawBackground = false;
             NetworkedSessionMenuCanvas.BackgroundColor = Color.Green;
 
             Ready = true;
@@ -89,6 +90,11 @@ namespace SnakeOnline
 
         public void SetupNetworkedSessionMenu()
         {
+            Gwen.Control.Label ServerSelectorLabel = new Gwen.Control.Label(NetworkedSessionMenuCanvas);
+            ServerSelectorLabel.SetText("Server");
+            ServerSelectorLabel.AutoSizeToContents = true;
+            ServerSelectorLabel.SetPosition(50, 0);
+
             Gwen.Control.ComboBox ServerSelector = new Gwen.Control.ComboBox(NetworkedSessionMenuCanvas);
             ServerSelector.AddItem("Server A");
             ServerSelector.AddItem("Server B");
@@ -101,24 +107,28 @@ namespace SnakeOnline
             ServerSelector.AddItem("Server I");
             ServerSelector.AddItem("Server J");
             ServerSelector.AddItem("Custom Server...");
+            ServerSelector.SetSize(200, 50);
+            ServerSelector.SetPosition(50, 20);
+            ServerSelector.TextColor = Color.Black;
+            ServerSelector.UpdateColors();
 
             Gwen.Control.Label CustomServerLabel = new Gwen.Control.Label(NetworkedSessionMenuCanvas);
-            CustomServerLabel.SetText("Address       Port");
+            CustomServerLabel.SetText("Address                                           Port");
             CustomServerLabel.AutoSizeToContents = true;
-            CustomServerLabel.SetPosition(50, 300);
+            CustomServerLabel.SetPosition(50, 180);
 
             CustomServerAddress = new Gwen.Control.TextBox(NetworkedSessionMenuCanvas);
             CustomServerAddress.SetSize(200, 30);
-            CustomServerAddress.SetPosition(50, 320);
+            CustomServerAddress.SetPosition(50, 200);
 
             CustomServerPort = new Gwen.Control.TextBox(NetworkedSessionMenuCanvas);
-            CustomServerPort.SetSize(100, 30);
-            CustomServerPort.SetPosition(390, 320);
+            CustomServerPort.SetSize(70, 30);
+            CustomServerPort.SetPosition(254, 200);
 
             Gwen.Control.Button SessionConnect = new Gwen.Control.Button(NetworkedSessionMenuCanvas);
             SessionConnect.SetText("Connect");
             SessionConnect.SetSize(200, 50);
-            SessionConnect.SetPosition(300, 400);
+            SessionConnect.SetPosition(260, 400);
             SessionConnect.Clicked += (B, Args) => { SessionInterfaceIsOpen = false; };
         }
 
