@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using System.Net;
 
 namespace SnakeOnline
 {
@@ -53,9 +54,11 @@ namespace SnakeOnline
             return true;
         }
 
-        public SessionType SessionInterface()
+        public void SessionInterface(out SessionType RequestedSessionType, out System.Net.IPEndPoint RequestedEndPoint)
         {
-            return SessionType.Singleplayer;
+            RequestedSessionType = SessionType.Singleplayer;
+
+            RequestedEndPoint = new IPEndPoint(IPAddress.Parse("67.166.8.31"), 735);
         }
 
         public void SetupLocal(World LocalWorldInst, Snake LocalSnakeInst)

@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Drawing;
 using OpenTK;
+using System.Net;
+using System.Net.Sockets;
 
 namespace SnakeOnline
 {
     class GameManager
     {
         private Session GameSession;
+
+        private SessionType RequestedSessionType;
+        private IPEndPoint RequestedEndPoint;
 
         private GameView LocalView;
         private GameView RemoteView;
@@ -42,15 +47,23 @@ namespace SnakeOnline
             }
         }
 
-        public SessionType RequestSessionType()
+        public void RequestNewSession()
         {
-            return Window.SessionInterface();
+            Window.SessionInterface(out RequestedSessionType, out RequestedEndPoint);
         }
 
-        public void StartSession(SessionType Type)
+        public void StartSession()
         {
             GameSession = new Session();
-            GameSession.Type = Type;
+            GameSession.Type = RequestedSessionType;
+
+            if (GameSession.Type == SessionType.Multiplayer)
+            {
+                if (!GameSession.Create(RequestedEndPoint, Rows, Columns))
+                {
+                    throw new Exception("Failed to Create Game Session");
+                }
+            }
 
             LocalView = new GameView();
 
@@ -82,10 +95,13 @@ namespace SnakeOnline
                 Window.SetupRemote(RemoteView.WorldInst);
             }
 
-            NetworkUpdateLoop = new Timer(500.0d);
-            NetworkUpdateLoop.AutoReset = true;
-            NetworkUpdateLoop.Elapsed += new ElapsedEventHandler(NetworkUpdate);
-            NetworkUpdateLoop.Enabled = true;
+            if (GameSession.Type == SessionType.Multiplayer)
+            {
+                NetworkUpdateLoop = new Timer(500.0d);
+                NetworkUpdateLoop.AutoReset = true;
+                NetworkUpdateLoop.Elapsed += new ElapsedEventHandler(NetworkUpdate);
+                NetworkUpdateLoop.Enabled = true;
+            }
 
             ClientGameLoop = new Timer(UpdateRate * 1000d);
             ClientGameLoop.AutoReset = true;
@@ -95,8 +111,8 @@ namespace SnakeOnline
 
         protected void NetworkUpdate(object Sender, ElapsedEventArgs e)
         {
-            //GameSession.SendWorld(LocalView.WorldInst);
-            //GameSession.ReceiveWorld(RemoteView.WorldInst);
+            GameSession.SendWorld(LocalView.WorldInst);
+            GameSession.ReceiveWorld(RemoteView.WorldInst);
         }
 
         protected void GameLoop(object Sender, ElapsedEventArgs e)

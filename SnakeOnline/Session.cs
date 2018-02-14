@@ -20,7 +20,12 @@ namespace SnakeOnline
 
         private Socket SessionSocket;
 
-        bool Create(IPEndPoint EndPoint)
+        private byte[] WorldInstSerialized;
+
+        private int Rows;
+        private int Columns;
+
+        public bool Create(IPEndPoint EndPoint, int WorldRows, int WorldColumns)
         {
             try
             {
@@ -34,14 +39,17 @@ namespace SnakeOnline
                 return false;
             }
 
+            WorldInstSerialized = new byte[WorldRows * WorldColumns];
+
+            Rows = WorldRows;
+            Columns = WorldColumns;
+
             return true;
         }
 
         internal void SendWorld(World WorldInst)
         {
-            byte[] WorldInstSerialized = new byte[WorldInst.GetRows() * WorldInst.GetColumns()];
-
-            Buffer.BlockCopy(WorldInst.ItemMatrix, 0, WorldInstSerialized, 0, WorldInst.GetRows() * WorldInst.GetColumns());
+            Buffer.BlockCopy(WorldInst.ItemMatrix, 0, WorldInstSerialized, 0, Rows * Columns);
 
             SessionSocket.Send(WorldInstSerialized);
         }
@@ -49,13 +57,11 @@ namespace SnakeOnline
         // Blocking Call
         internal void ReceiveWorld(World WorldInst)
         {
-            byte[] WorldInstSerialized = new byte[WorldInst.GetRows() * WorldInst.GetColumns()];
-
             SessionSocket.Receive(WorldInstSerialized);
 
             for (int Iter = 0; Iter < WorldInstSerialized.Length; ++Iter)
             {
-                WorldInst.ItemMatrix[(int)Math.Floor((double)(4 / WorldInst.GetColumns())), Iter % WorldInst.GetColumns()] = WorldInstSerialized[Iter];
+                WorldInst.ItemMatrix[(int)Math.Floor((double)(4 / Columns)), Iter % Columns] = WorldInstSerialized[Iter];
             }
         }
 
