@@ -123,7 +123,7 @@ namespace SnakeOnline
 
             for (int Iter = 0; Iter < WorldInstSerialized.Length; ++Iter)
             {
-                WorldInst.ItemMatrix[(int)Math.Floor((double)(4 / Columns)), Iter % Columns] = WorldInstSerialized[Iter];
+                WorldInst.ItemMatrix[(int)Math.Floor((double)(Iter / Columns)), Iter % Columns] = WorldInstSerialized[Iter];
             }
         }
 
