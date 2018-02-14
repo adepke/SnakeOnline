@@ -59,10 +59,10 @@ namespace SnakeOnline
             WindowThread.Start();
 
             // Wait Until Window's Memory is Initialized.
-            while (Window == null) { }
+            while (Window == null) { Thread.Yield(); }
 
             // Wait Until Window is Ready for Usage.
-            while (!Window.Ready) { }
+            while (!Window.Ready) { Thread.Yield(); }
 
             Window.SetupNetworkedSessionMenu();
         }

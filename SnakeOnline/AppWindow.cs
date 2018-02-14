@@ -21,7 +21,7 @@ namespace SnakeOnline
         private Gwen.Skin.Base BaseSkin;
         private Gwen.Control.Canvas BaseCanvas;
 
-        private Gwen.Control.Canvas SessionMenuCanvas;
+        private Gwen.Control.Canvas MenuCanvas;
 
         private Gwen.Control.Canvas NetworkedSessionMenuCanvas;
 
