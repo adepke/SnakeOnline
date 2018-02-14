@@ -58,10 +58,12 @@ namespace SnakeOnline
         public bool Connect()
         {
             string ConnectMessage = "CONNECT";
+            
+            StringBuilder ConnectMessageBuilder = new StringBuilder(ConnectMessage, 32);
 
             try
             {
-                SessionSocket.SendTo(Encoding.ASCII.GetBytes(ConnectMessage), Remote);
+                SessionSocket.SendTo(Encoding.ASCII.GetBytes(ConnectMessageBuilder.ToString()), Remote);
             }
 
             catch (SocketException e)
