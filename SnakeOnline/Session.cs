@@ -77,11 +77,11 @@ namespace SnakeOnline
                 return false;
             }
 
-            byte[] PartnerSerialized = new byte[64];
+            byte[] PartnerSerialized = new byte[32];
 
             try
             {
-                SessionSocket.Receive(PartnerSerialized, 64, SocketFlags.None);
+                SessionSocket.Receive(PartnerSerialized, 32, SocketFlags.None);
             }
 
             catch (SocketException e)
@@ -98,7 +98,7 @@ namespace SnakeOnline
                 return false;
             }
 
-            string PartnerAddress = Partner.Substring(3);
+            string PartnerAddress = Partner.Substring(4);
 
             for (int Iter = 0; Iter < PartnerAddress.Length; ++Iter)
             {

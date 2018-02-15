@@ -19,6 +19,7 @@ namespace SnakeOnline
         private Session GameSession;
 
         private bool SessionReady = false;
+        private bool InSession = false;
 
         private SessionType RequestedSessionType;
         private IPEndPoint RequestedEndPoint;
@@ -124,7 +125,7 @@ namespace SnakeOnline
 
             while (Running)
             {
-                if (SessionReady)
+                if (SessionReady && !InSession)
                 {
                     LocalView.Spawn();
 
@@ -148,6 +149,7 @@ namespace SnakeOnline
                     ClientGameLoop.Elapsed += new ElapsedEventHandler(GameLoop);
                     ClientGameLoop.Enabled = true;
 
+                    InSession = true;
                     Window.IsInSession = true;
                 }
 
