@@ -6,36 +6,55 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 using OpenTK;
+using OpenTK.Input;
 using OpenTK.Graphics.OpenGL;
 using System.Net;
 
 namespace SnakeOnline
 {
+    enum Screen
+    {
+        Game,
+        Menu,
+        NetworkedSessionMenu,
+        Connecting,
+    }
+
     class AppWindow : GameWindow
     {
         public bool Ready = false;
 
         public bool IsInSession = false;
 
-        public SessionType ActiveSessionType;
+        private SessionType ActiveSessionType;
+
+        internal Screen ActiveScreen = Screen.Menu;
 
         private Gwen.Renderer.OpenTK RenderHandler;
         private Gwen.Input.OpenTK InputHandler;
         private Gwen.Skin.Base BaseSkin;
         private Gwen.Control.Canvas BaseCanvas;
 
-        private Gwen.Control.Canvas MenuCanvas;
-
-        private Gwen.Control.Canvas NetworkedSessionMenuCanvas;
-
-        private Gwen.Control.ComboBox ServerSelector;
-        private Gwen.Control.TextBox CustomServerAddress;
-        private Gwen.Control.TextBox CustomServerPort;
-
-        private bool SessionInterfaceIsOpen = false;
-
+        // Game Screen.
         private Gwen.Control.TextBox LocalSizeBox;
         private Gwen.Control.TextBox RemoteSizeBox;
+        private Gwen.Control.Button ReturnToMenuButton;
+
+        // Menu Screen.
+        private Gwen.Control.Button SingleplayerButton;
+        private Gwen.Control.Button MultiplayerButton;
+
+        // Networked Session Menu Screen.
+        private Gwen.Control.Label ServerSelectorLabel;
+        private Gwen.Control.ComboBox ServerSelector;
+        private Gwen.Control.Label CustomServerLabel;
+        private Gwen.Control.TextBox CustomServerAddress;
+        private Gwen.Control.TextBox CustomServerPort;
+        private Gwen.Control.Button SessionConnect;
+
+        public delegate void EndCallback();
+
+        private EndCallback SessionLeaveCallback;
 
         private int Rows;
         private int Columns;
@@ -69,18 +88,7 @@ namespace SnakeOnline
             BaseCanvas.SetSize(Width, Height);
             BaseCanvas.ShouldDrawBackground = true;
             BaseCanvas.BackgroundColor = Color.White;
-            
-            MenuCanvas = new Gwen.Control.Canvas(BaseSkin);
-            MenuCanvas.SetSize(Width, Height);
-            MenuCanvas.SetPosition(0, 0);
-            MenuCanvas.ShouldDrawBackground = false;
 
-            NetworkedSessionMenuCanvas = new Gwen.Control.Canvas(BaseSkin);
-            NetworkedSessionMenuCanvas.SetSize((int)Math.Floor(Width * 0.8d), (int)Math.Floor(Height * 0.8d));
-            NetworkedSessionMenuCanvas.SetPosition(50, 50);
-            NetworkedSessionMenuCanvas.ShouldDrawBackground = false;
-            NetworkedSessionMenuCanvas.BackgroundColor = Color.Green;
-            
             InputHandler = new Gwen.Input.OpenTK(this);
             InputHandler.Initialize(BaseCanvas);
             
@@ -91,6 +99,9 @@ namespace SnakeOnline
             Mouse.ButtonUp += Mouse_ButtonUp;
             Mouse.Move += Mouse_Move;
             Mouse.WheelChanged += Mouse_Wheel;
+
+            SetupMenu();
+            SetupNetworkedSessionMenu();
 
             Ready = true;
 
@@ -127,73 +138,110 @@ namespace SnakeOnline
             InputHandler.ProcessMouseMessage(args);
         }
 
+        // Used to Interrupt Logic Flow of GameManager When an Event That Causes and End of Session in the GUI is Triggered.
+        public void SessionEndCallback(EndCallback Callback)
+        {
+            SessionLeaveCallback = Callback;
+        }
+
         public void SessionInterface(out SessionType RequestedSessionType, out IPEndPoint RequestedEndPoint)
         {
-            SessionInterfaceIsOpen = true;
+            ActiveScreen = Screen.Menu;
 
-            RequestedSessionType = SessionType.Multiplayer;
-
-            //RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 735);
+            // Defaults.
+            RequestedSessionType = SessionType.Singleplayer;
+            RequestedEndPoint = null;
 
             // Stall Calling Thread Until the Interface is Closed.
-            while (SessionInterfaceIsOpen)
+            while (ActiveScreen == Screen.Menu || ActiveScreen == Screen.NetworkedSessionMenu)
             {
                 System.Threading.Thread.Yield();
             }
-            
-            // Pseudo Code
-            /*
-            switch (ServerSelector.ActiveElement)
+
+            if (ActiveSessionType == SessionType.Multiplayer)
             {
-                case "Server A":
-                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6700);
-                    break;
-                case "Server B":
-                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6701);
-                    break;
-                case "Server C":
-                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6702);
-                    break;
-                case "Server D":
-                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6703);
-                    break;
-                case "Server E":
-                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6704);
-                    break;
-                case "Server F":
-                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6705);
-                    break;
-                case "Server G":
-                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6706);
-                    break;
-                case "Server H":
-                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6707);
-                    break;
-                case "Server I":
-                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6708);
-                    break;
-                case "Server J":
-                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6709);
-                    break;
-                case "Custom Server...":
-                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse(CustomServerAddress.Content), Convert.ToInt32(CustomServerPort.Content));
-                    break;
-                default:
-                    RequestedSessionType = SessionType.Singleplayer;
-                    RequestedEndPoint = null;
-                    break;
+                RequestedSessionType = SessionType.Multiplayer;
+
+                switch (ServerSelector.SelectedItem.Text)
+                {
+                    case "Server A":
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6700);
+                        break;
+                    case "Server B":
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6701);
+                        break;
+                    case "Server C":
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6702);
+                        break;
+                    case "Server D":
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6703);
+                        break;
+                    case "Server E":
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6704);
+                        break;
+                    case "Server F":
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6705);
+                        break;
+                    case "Server G":
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6706);
+                        break;
+                    case "Server H":
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6707);
+                        break;
+                    case "Server I":
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6708);
+                        break;
+                    case "Server J":
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6709);
+                        break;
+                    case "Custom Server...":
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse(CustomServerAddress.Text), Convert.ToInt32(CustomServerPort.Text));
+                        break;
+                    default:
+                        RequestedSessionType = SessionType.Singleplayer;
+                        RequestedEndPoint = null;
+                        break;
+                }
             }
-            */
+
+            else
+            {
+                RequestedSessionType = SessionType.Singleplayer;
+                RequestedEndPoint = null;
+            }
+        }
+
+        public void SetupMenu()
+        {
+            SingleplayerButton = new Gwen.Control.Button(BaseCanvas);
+            SingleplayerButton.SetText("Singleplayer");
+            SingleplayerButton.SetSize(300, 100);
+            SingleplayerButton.SetPosition(200, 100);
+            SingleplayerButton.Clicked += (B, Args) =>
+            {
+                ActiveScreen = Screen.Game;
+                ActiveSessionType = SessionType.Singleplayer;
+            };
+
+            MultiplayerButton = new Gwen.Control.Button(BaseCanvas);
+            MultiplayerButton.SetText("Multiplayer");
+            MultiplayerButton.SetSize(300, 100);
+            MultiplayerButton.SetPosition(200, 240);
+            MultiplayerButton.Clicked += (B, Args) =>
+            {
+                ActiveScreen = Screen.NetworkedSessionMenu;
+                ActiveSessionType = SessionType.Multiplayer;
+            };
         }
 
         public void SetupNetworkedSessionMenu()
         {
-            Gwen.Control.Label ServerSelectorLabel = new Gwen.Control.Label(NetworkedSessionMenuCanvas);
+            ServerSelectorLabel = new Gwen.Control.Label(BaseCanvas);
             ServerSelectorLabel.SetText("Server");
             ServerSelectorLabel.AutoSizeToContents = true;
             ServerSelectorLabel.SetPosition(50, 0);
 
-            ServerSelector = new Gwen.Control.ComboBox(NetworkedSessionMenuCanvas);
+            ServerSelector = new Gwen.Control.ComboBox(BaseCanvas);
             ServerSelector.AddItem("Server A");
             ServerSelector.AddItem("Server B");
             ServerSelector.AddItem("Server C");
@@ -210,24 +258,27 @@ namespace SnakeOnline
             ServerSelector.TextColor = Color.Black;
             ServerSelector.UpdateColors();
 
-            Gwen.Control.Label CustomServerLabel = new Gwen.Control.Label(NetworkedSessionMenuCanvas);
+            CustomServerLabel = new Gwen.Control.Label(BaseCanvas);
             CustomServerLabel.SetText("Address                                           Port");
             CustomServerLabel.AutoSizeToContents = true;
             CustomServerLabel.SetPosition(50, 180);
 
-            CustomServerAddress = new Gwen.Control.TextBox(NetworkedSessionMenuCanvas);
+            CustomServerAddress = new Gwen.Control.TextBox(BaseCanvas);
             CustomServerAddress.SetSize(200, 30);
             CustomServerAddress.SetPosition(50, 200);
 
-            CustomServerPort = new Gwen.Control.TextBox(NetworkedSessionMenuCanvas);
+            CustomServerPort = new Gwen.Control.TextBox(BaseCanvas);
             CustomServerPort.SetSize(70, 30);
             CustomServerPort.SetPosition(254, 200);
 
-            Gwen.Control.Button SessionConnect = new Gwen.Control.Button(NetworkedSessionMenuCanvas);
+            SessionConnect = new Gwen.Control.Button(BaseCanvas);
             SessionConnect.SetText("Connect");
             SessionConnect.SetSize(200, 50);
             SessionConnect.SetPosition(260, 400);
-            SessionConnect.Clicked += (B, Args) => { SessionInterfaceIsOpen = false; };
+            SessionConnect.Clicked += (B, Args) =>
+            {
+                ActiveScreen = Screen.Connecting;
+            };
         }
 
         public void SetupLocal(World LocalWorldInst, Snake LocalSnakeInst)
@@ -238,6 +289,17 @@ namespace SnakeOnline
             LocalSizeBox = new Gwen.Control.TextBox(BaseCanvas);
             LocalSizeBox.TextColor = Color.Black;
             LocalSizeBox.SetPosition(0, Rows * RowHeight);
+
+            ReturnToMenuButton = new Gwen.Control.Button(BaseCanvas);
+            ReturnToMenuButton.SetText("Return to Menu");
+            ReturnToMenuButton.AutoSizeToContents = true;
+            ReturnToMenuButton.SetPosition(0, Rows * RowHeight + 60);
+            ReturnToMenuButton.Clicked += (B, Args) =>
+            {
+                ActiveScreen = Screen.Menu;
+
+                SessionLeaveCallback();
+            };
         }
 
         public void SetupRemote(World RemoteWorldInst)
@@ -249,131 +311,242 @@ namespace SnakeOnline
             RemoteSizeBox.SetPosition(Columns * ColumnWidth + 50, Rows * RowHeight);
         }
 
+        protected void ShowGame(bool Show = true)
+        {
+            if (Show)
+            {
+                if (LocalSizeBox != null) LocalSizeBox.Show();
+                if (RemoteSizeBox != null) RemoteSizeBox.Show();
+                if (ReturnToMenuButton != null) ReturnToMenuButton.Show();
+            }
+
+            else
+            {
+                if (LocalSizeBox != null) LocalSizeBox.Hide();
+                if (RemoteSizeBox != null) RemoteSizeBox.Hide();
+                if (ReturnToMenuButton != null) ReturnToMenuButton.Hide();
+            }
+        }
+
+        protected void ShowMenu(bool Show = true)
+        {
+            if (Show)
+            {
+                SingleplayerButton.Show();
+                MultiplayerButton.Show();
+            }
+
+            else
+            {
+                SingleplayerButton.Hide();
+                MultiplayerButton.Hide();
+            }
+        }
+
+        protected void ShowNetworkedSessionMenu(bool Show = true)
+        {
+            if (Show)
+            {
+                ServerSelectorLabel.Show();
+                ServerSelector.Show();
+                CustomServerLabel.Show();
+                CustomServerAddress.Show();
+                CustomServerPort.Show();
+                SessionConnect.Show();
+            }
+
+            else
+            {
+                ServerSelectorLabel.Hide();
+                ServerSelector.Hide();
+                CustomServerLabel.Hide();
+                CustomServerAddress.Hide();
+                CustomServerPort.Hide();
+                SessionConnect.Hide();
+            }
+        }
+
+        protected void ShowConnecting(bool Show = true)
+        {
+            if (Show)
+            {
+
+            }
+
+            else
+            {
+
+            }
+        }
+
+        protected void ShowScreen(Screen NewScreen)
+        {
+            switch (NewScreen)
+            {
+                case Screen.Game:
+                    ShowGame(true);
+                    ShowMenu(false);
+                    ShowNetworkedSessionMenu(false);
+                    ShowConnecting(false);
+                    break;
+                case Screen.Menu:
+                    ShowGame(false);
+                    ShowMenu(true);
+                    ShowNetworkedSessionMenu(false);
+                    ShowConnecting(false);
+                    break;
+                case Screen.NetworkedSessionMenu:
+                    ShowGame(false);
+                    ShowMenu(false);
+                    ShowNetworkedSessionMenu(true);
+                    ShowConnecting(false);
+                    break;
+                case Screen.Connecting:
+                    ShowGame(false);
+                    ShowMenu(false);
+                    ShowNetworkedSessionMenu(false);
+                    ShowConnecting(true);
+                    break;
+            }
+        }
+
         public void DrawLocalUI()
         {
-            LocalSizeBox.Text = "Size: " + LocalSnakeInst.GetSize();
-            LocalSizeBox.SizeToContents();
+            if (LocalSizeBox != null)
+            {
+                LocalSizeBox.Text = "Size: " + LocalSnakeInst.GetSize();
+                LocalSizeBox.SizeToContents();
+            }
         }
 
         public void DrawLocalGame()
         {
-            //GL.MatrixMode(MatrixMode.Projection);
-            //GL.LoadIdentity();
-            //GL.PushMatrix();
-
-            GL.Color4(Color.White);
-
-            for (int Row = 0; Row < Rows; ++Row)
+            if (LocalWorldInst != null)
             {
-                for (int Column = 0; Column < Columns; ++Column)
+                //GL.MatrixMode(MatrixMode.Projection);
+                //GL.LoadIdentity();
+                //GL.PushMatrix();
+
+                GL.Color4(Color.White);
+
+                for (int Row = 0; Row < Rows; ++Row)
                 {
-                    if ((int)LocalWorldInst.Get(Row, Column) == 0)
+                    for (int Column = 0; Column < Columns; ++Column)
                     {
-                        GL.BindTexture(TextureTarget.Texture2D, GridCellTexture);
+                        if ((int)LocalWorldInst.Get(Row, Column) == 0)
+                        {
+                            GL.BindTexture(TextureTarget.Texture2D, GridCellTexture);
+                        }
+
+                        else if ((int)LocalWorldInst.Get(Row, Column) == 1)
+                        {
+                            GL.BindTexture(TextureTarget.Texture2D, SnakeCellTexture);
+                        }
+
+                        else
+                        {
+                            GL.BindTexture(TextureTarget.Texture2D, ItemCellTexture);
+                        }
+
+                        GL.Begin(PrimitiveType.Quads);
+
+                        // Bottom Left
+                        GL.TexCoord2(0f, 1f);
+                        GL.Vertex2(Column * ColumnWidth, Row * RowHeight);
+
+                        // Bottom Right
+                        GL.TexCoord2(1f, 1f);
+                        GL.Vertex2(Column * ColumnWidth + ColumnWidth, Row * RowHeight);
+
+                        // Top Right
+                        GL.TexCoord2(1f, 0f);
+                        GL.Vertex2(Column * ColumnWidth + ColumnWidth, Row * RowHeight + RowHeight);
+
+                        // Top Left
+                        GL.TexCoord2(0f, 0f);
+                        GL.Vertex2(Column * ColumnWidth, Row * RowHeight + RowHeight);
+
+                        GL.End();
                     }
-
-                    else if ((int)LocalWorldInst.Get(Row, Column) == 1)
-                    {
-                        GL.BindTexture(TextureTarget.Texture2D, SnakeCellTexture);
-                    }
-
-                    else
-                    {
-                        GL.BindTexture(TextureTarget.Texture2D, ItemCellTexture);
-                    }
-
-                    GL.Begin(PrimitiveType.Quads);
-
-                    // Bottom Left
-                    GL.TexCoord2(0f, 1f);
-                    GL.Vertex2(Column * ColumnWidth, Row * RowHeight);
-
-                    // Bottom Right
-                    GL.TexCoord2(1f, 1f);
-                    GL.Vertex2(Column * ColumnWidth + ColumnWidth, Row * RowHeight);
-
-                    // Top Right
-                    GL.TexCoord2(1f, 0f);
-                    GL.Vertex2(Column * ColumnWidth + ColumnWidth, Row * RowHeight + RowHeight);
-
-                    // Top Left
-                    GL.TexCoord2(0f, 0f);
-                    GL.Vertex2(Column * ColumnWidth, Row * RowHeight + RowHeight);
-
-                    GL.End();
                 }
+
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+
+                //GL.PopMatrix();
             }
-
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-
-            //GL.PopMatrix();
         }
 
         public void DrawRemoteUI()
         {
-            int RemoteSize = 0;
-        
-            for (int Row = 0; Row < Rows; ++Row)
+            if (RemoteWorldInst != null)
             {
-                for (int Column = 0; Column < Columns; ++Column)
+                int RemoteSize = 0;
+
+                for (int Row = 0; Row < Rows; ++Row)
                 {
-                    if (RemoteWorldInst.Get(Row, Column) == 1)
+                    for (int Column = 0; Column < Columns; ++Column)
                     {
-                        ++RemoteSize;
+                        if (RemoteWorldInst.Get(Row, Column) == 1)
+                        {
+                            ++RemoteSize;
+                        }
                     }
                 }
+
+                RemoteSizeBox.Text = "Size: " + RemoteSize;
+                RemoteSizeBox.SizeToContents();
             }
-            
-            RemoteSizeBox.Text = "Size: " + RemoteSize;
-            RemoteSizeBox.SizeToContents();
         }
 
         public void DrawRemoteGame()
         {
-            GL.Color4(Color.White);
-
-            for (int Row = 0; Row < Rows; ++Row)
+            if (RemoteWorldInst != null)
             {
-                for (int Column = 0; Column < Columns; ++Column)
+                GL.Color4(Color.White);
+
+                for (int Row = 0; Row < Rows; ++Row)
                 {
-                    if ((int)RemoteWorldInst.Get(Row, Column) == 0)
+                    for (int Column = 0; Column < Columns; ++Column)
                     {
-                        GL.BindTexture(TextureTarget.Texture2D, GridCellTexture);
+                        if ((int)RemoteWorldInst.Get(Row, Column) == 0)
+                        {
+                            GL.BindTexture(TextureTarget.Texture2D, GridCellTexture);
+                        }
+
+                        else if ((int)RemoteWorldInst.Get(Row, Column) == 1)
+                        {
+                            GL.BindTexture(TextureTarget.Texture2D, SnakeCellTexture);
+                        }
+
+                        else
+                        {
+                            GL.BindTexture(TextureTarget.Texture2D, ItemCellTexture);
+                        }
+
+                        GL.Begin(PrimitiveType.Quads);
+
+                        // Bottom Left
+                        GL.TexCoord2(0f, 1f);
+                        GL.Vertex2(Column * ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight);
+
+                        // Bottom Right
+                        GL.TexCoord2(1f, 1f);
+                        GL.Vertex2(Column * ColumnWidth + ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight);
+
+                        // Top Right
+                        GL.TexCoord2(1f, 0f);
+                        GL.Vertex2(Column * ColumnWidth + ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight + RowHeight);
+
+                        // Top Left
+                        GL.TexCoord2(0f, 0f);
+                        GL.Vertex2(Column * ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight + RowHeight);
+
+                        GL.End();
                     }
-
-                    else if ((int)RemoteWorldInst.Get(Row, Column) == 1)
-                    {
-                        GL.BindTexture(TextureTarget.Texture2D, SnakeCellTexture);
-                    }
-
-                    else
-                    {
-                        GL.BindTexture(TextureTarget.Texture2D, ItemCellTexture);
-                    }
-
-                    GL.Begin(PrimitiveType.Quads);
-
-                    // Bottom Left
-                    GL.TexCoord2(0f, 1f);
-                    GL.Vertex2(Column * ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight);
-
-                    // Bottom Right
-                    GL.TexCoord2(1f, 1f);
-                    GL.Vertex2(Column * ColumnWidth + ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight);
-
-                    // Top Right
-                    GL.TexCoord2(1f, 0f);
-                    GL.Vertex2(Column * ColumnWidth + ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight + RowHeight);
-
-                    // Top Left
-                    GL.TexCoord2(0f, 0f);
-                    GL.Vertex2(Column * ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight + RowHeight);
-
-                    GL.End();
                 }
-            }
 
-            GL.BindTexture(TextureTarget.Texture2D, 0);
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+            }
         }
 
         protected override void OnLoad(EventArgs e)
@@ -486,7 +659,9 @@ namespace SnakeOnline
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            if (IsInSession)
+            ShowScreen(ActiveScreen);
+
+            if (ActiveScreen == Screen.Game)
             {
                 DrawLocalUI();
 
@@ -505,9 +680,9 @@ namespace SnakeOnline
                 }
             }
 
-            else if (SessionInterfaceIsOpen)
+            else
             {
-                NetworkedSessionMenuCanvas.RenderCanvas();
+                BaseCanvas.RenderCanvas();
             }
 
             GL.Flush();
@@ -519,8 +694,6 @@ namespace SnakeOnline
         {
             base.Dispose();
 
-            NetworkedSessionMenuCanvas.Dispose();
-            MenuCanvas.Dispose();
             BaseCanvas.Dispose();
             BaseSkin.Dispose();
             RenderHandler.Dispose();

@@ -65,7 +65,12 @@ namespace SnakeOnline
             // Wait Until Window is Ready for Usage.
             while (!Window.Ready) { Thread.Yield(); }
 
-            Window.SetupNetworkedSessionMenu();
+            Window.SessionEndCallback(
+                () =>
+                {
+                    InSession = false;
+                    SessionReady = false;
+                });
         }
 
         public void RequestNewSession()
@@ -132,7 +137,13 @@ namespace SnakeOnline
 
             while (Running)
             {
-                if (SessionReady && !InSession)
+                if (InSession)
+                {
+                    // Divert Resources to Other Threads.
+                    Thread.Yield();
+                }
+
+                else if (SessionReady)
                 {
                     LocalView.Spawn();
 
@@ -158,11 +169,16 @@ namespace SnakeOnline
 
                     InSession = true;
                     Window.IsInSession = true;
-                    Window.ActiveSessionType = RequestedSessionType;
                 }
 
                 else
                 {
+                    if (ClientGameLoop != null)
+                        ClientGameLoop.Stop();
+
+                    if (NetworkUpdateLoop != null)
+                        NetworkUpdateLoop.Stop();
+
                     // Loop Until a Valid Session is Ready.
                     while (!SessionReady)
                     {
@@ -171,6 +187,8 @@ namespace SnakeOnline
                         StartSession();
 
                         SessionReady = ConnectSession();
+
+                        Window.ActiveScreen = Screen.Game;
 
                         if (!SessionReady)
                         {
