@@ -108,13 +108,18 @@ namespace SnakeOnline
         {
             if (GameSession.Type == SessionType.Multiplayer)
             {
-                Console.WriteLine("Connecting...\n");
+                Console.WriteLine("Connecting... (Timeout in 60 Seconds)\n");
                 
                 if (!GameSession.Connect())
                 {
                     Console.WriteLine("\nFailed to Connect to Presider Server\n");
 
                     return false;
+                }
+                
+                else
+                {
+                    Console.WriteLine("Connection Established\n");
                 }
             }
 
