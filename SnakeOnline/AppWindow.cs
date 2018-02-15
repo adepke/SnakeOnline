@@ -409,6 +409,7 @@ namespace SnakeOnline
         {
             base.Dispose();
 
+            NetworkedSessionMenuCanvas.Dispose();
             BaseCanvas.Dispose();
             BaseSkin.Dispose();
             RenderHandler.Dispose();
