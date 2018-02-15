@@ -61,7 +61,8 @@ namespace SnakeOnline
         {
             string ConnectMessage = "CONNECT";
             
-            char[] ConnectMessageBuffer = new char[32];
+            // Char Type is 2 Bytes Wide, P2PPresider Takes 32 Byte Request.
+            char[] ConnectMessageBuffer = new char[16];
 
             ConnectMessageBuffer = ConnectMessage.ToCharArray();
 
@@ -117,7 +118,7 @@ namespace SnakeOnline
         {
             Buffer.BlockCopy(WorldInst.ItemMatrix, 0, WorldInstSerialized, 0, Rows * Columns);
 
-            SessionSocket.SendTo(WorldInstSerialized, Remote);
+            SessionSocket.SendTo(WorldInstSerialized, Rows * Columns, SocketFlags.None, Remote);
         }
 
         // Blocking Call

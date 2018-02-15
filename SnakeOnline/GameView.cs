@@ -87,11 +87,9 @@ namespace SnakeOnline
 
                 return;
             }
-
-            //DebugDraw();
         }
 
-        private void DebugDraw()
+        public void DebugDraw()
         {
             Console.Clear();
 
@@ -104,6 +102,8 @@ namespace SnakeOnline
 
                 Console.WriteLine("");
             }
+
+            Console.WriteLine("Drew {0} Rows, {1} Columns", WorldInst.GetRows(), WorldInst.GetColumns());
         }
     }
 }

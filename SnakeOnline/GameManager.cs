@@ -138,7 +138,7 @@ namespace SnakeOnline
 
                     if (GameSession.Type == SessionType.Multiplayer)
                     {
-                        NetworkUpdateLoop = new System.Timers.Timer(500.0d);
+                        NetworkUpdateLoop = new System.Timers.Timer(100.0d);
                         NetworkUpdateLoop.AutoReset = true;
                         NetworkUpdateLoop.Elapsed += new ElapsedEventHandler(NetworkUpdate);
                         NetworkUpdateLoop.Enabled = true;
@@ -151,6 +151,7 @@ namespace SnakeOnline
 
                     InSession = true;
                     Window.IsInSession = true;
+                    Window.ActiveSessionType = RequestedSessionType;
                 }
 
                 else

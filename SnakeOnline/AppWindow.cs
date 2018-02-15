@@ -17,6 +17,8 @@ namespace SnakeOnline
 
         public bool IsInSession = false;
 
+        public SessionType ActiveSessionType;
+
         private Gwen.Renderer.OpenTK RenderHandler;
         private Gwen.Skin.Base BaseSkin;
         private Gwen.Control.Canvas BaseCanvas;
@@ -221,7 +223,50 @@ namespace SnakeOnline
 
         public void DrawRemoteGame()
         {
+            GL.Color4(Color.White);
 
+            for (int Row = 0; Row < Rows; ++Row)
+            {
+                for (int Column = 0; Column < Columns; ++Column)
+                {
+                    if ((int)RemoteWorldInst.Get(Row, Column) == 0)
+                    {
+                        GL.BindTexture(TextureTarget.Texture2D, GridCellTexture);
+                    }
+
+                    else if ((int)RemoteWorldInst.Get(Row, Column) == 1)
+                    {
+                        GL.BindTexture(TextureTarget.Texture2D, SnakeCellTexture);
+                    }
+
+                    else
+                    {
+                        GL.BindTexture(TextureTarget.Texture2D, ItemCellTexture);
+                    }
+
+                    GL.Begin(PrimitiveType.Quads);
+
+                    // Bottom Left
+                    GL.TexCoord2(0f, 1f);
+                    GL.Vertex2(Column * 25 + (Columns * 25 + 50), Row * 25);
+
+                    // Bottom Right
+                    GL.TexCoord2(1f, 1f);
+                    GL.Vertex2(Column * 25 + 25 + (Columns * 25 + 50), Row * 25);
+
+                    // Top Right
+                    GL.TexCoord2(1f, 0f);
+                    GL.Vertex2(Column * 25 + 25 + (Columns * 25 + 50), Row * 25 + 25);
+
+                    // Top Left
+                    GL.TexCoord2(0f, 0f);
+                    GL.Vertex2(Column * 25 + (Columns * 25 + 50), Row * 25 + 25);
+
+                    GL.End();
+                }
+            }
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -338,9 +383,19 @@ namespace SnakeOnline
             {
                 DrawLocalUI();
 
+                if (ActiveSessionType == SessionType.Multiplayer)
+                {
+                    DrawRemoteUI();
+                }
+
                 BaseCanvas.RenderCanvas();
 
                 DrawLocalGame();
+
+                if (ActiveSessionType == SessionType.Multiplayer)
+                {
+                    DrawRemoteGame();
+                }
             }
 
             else if (SessionInterfaceIsOpen)
