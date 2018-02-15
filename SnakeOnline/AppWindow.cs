@@ -20,6 +20,7 @@ namespace SnakeOnline
         public SessionType ActiveSessionType;
 
         private Gwen.Renderer.OpenTK RenderHandler;
+        private Gwen.Input.OpenTK InputHandler;
         private Gwen.Skin.Base BaseSkin;
         private Gwen.Control.Canvas BaseCanvas;
 
@@ -72,10 +73,51 @@ namespace SnakeOnline
             NetworkedSessionMenuCanvas.SetPosition(50, 50);
             NetworkedSessionMenuCanvas.ShouldDrawBackground = false;
             NetworkedSessionMenuCanvas.BackgroundColor = Color.Green;
+            
+            InputHandler = new Gwen.Input.OpenTK(this);
+            InputHandler.Initialize(BaseCanvas);
+            
+            // Setup Generic Window Callbacks
+            Keyboard.KeyDown += Keyboard_KeyDown;
+            Keyboard.KeyUp += Keyboard_KeyUp;
+            Mouse.ButtonDown += Mouse_ButtonDown;
+            Mouse.ButtonUp += Mouse_ButtonUp;
+            Mouse.Move += Mouse_Move;
+            Mouse.WheelChanged += Mouse_Wheel;
 
             Ready = true;
 
             return true;
+        }
+        
+        void Keyboard_KeyDown(object sender, KeyboardKeyEventArgs e)
+        {
+            InputHandler.ProcessKeyDown(e);
+        }
+        
+        void Keyboard_KeyUp(object sender, KeyboardKeyEventArgs e)
+        {
+            InputHandler.ProcessKeyUp(e);
+        }
+        
+        void Mouse_ButtonDown(object sender, MouseButtonEventArgs args)
+        {
+            InputHandler.ProcessMouseMessage(args);
+        }
+
+        void Mouse_ButtonUp(object sender, MouseButtonEventArgs args)
+        {
+            InputHandler.ProcessMouseMessage(args);
+        }
+
+        void Mouse_Move(object sender, MouseMoveEventArgs args)
+        {
+            InputHandler.ProcessMouseMessage(args);
+        }
+
+        void Mouse_Wheel(object sender, MouseWheelEventArgs args)
+        {
+            InputHandler.ProcessMouseMessage(args);
         }
 
         public void SessionInterface(out SessionType RequestedSessionType, out IPEndPoint RequestedEndPoint)
