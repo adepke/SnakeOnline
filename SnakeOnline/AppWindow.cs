@@ -35,11 +35,12 @@ namespace SnakeOnline
         private bool SessionInterfaceIsOpen = false;
 
         private Gwen.Control.TextBox LocalSizeBox;
+        private Gwen.Control.TextBox RemoteSizeBox;
 
         private int Rows;
         private int Columns;
 
-        private int RowWidth = 25;
+        private int ColumnWidth = 25;
         private int RowHeight = 25;
 
         private World LocalWorldInst;
@@ -68,6 +69,11 @@ namespace SnakeOnline
             BaseCanvas.SetSize(Width, Height);
             BaseCanvas.ShouldDrawBackground = true;
             BaseCanvas.BackgroundColor = Color.White;
+            
+            MenuCanvas = new Gwen.Control.Canvas(BaseSkin);
+            MenuCanvas.SetSize(Width, Height);
+            MenuCanvas.SetPosition(0, 0);
+            MenuCanvas.ShouldDrawBackground = false;
 
             NetworkedSessionMenuCanvas = new Gwen.Control.Canvas(BaseSkin);
             NetworkedSessionMenuCanvas.SetSize((int)Math.Floor(Width * 0.8d), (int)Math.Floor(Height * 0.8d));
@@ -234,10 +240,13 @@ namespace SnakeOnline
             LocalSizeBox.SetPosition(0, Rows * RowHeight);
         }
 
-        // @todo: Add RemoteSnakeInst
         public void SetupRemote(World RemoteWorldInst)
         {
             this.RemoteWorldInst = RemoteWorldInst;
+            
+            RemoteSizeBox = new Gwen.Control.TextBox(BaseCanvas);
+            RemoteSizeBox.TextColor = Color.Black;
+            RemoteSizeBox.SetPosition(Columns * ColumnWidth + 50, Rows * RowHeight);
         }
 
         public void DrawLocalUI()
@@ -277,19 +286,19 @@ namespace SnakeOnline
 
                     // Bottom Left
                     GL.TexCoord2(0f, 1f);
-                    GL.Vertex2(Column * 25, Row * 25);
+                    GL.Vertex2(Column * ColumnWidth, Row * RowHeight);
 
                     // Bottom Right
                     GL.TexCoord2(1f, 1f);
-                    GL.Vertex2(Column * 25 + 25, Row * 25);
+                    GL.Vertex2(Column * ColumnWidth + ColumnWidth, Row * RowHeight);
 
                     // Top Right
                     GL.TexCoord2(1f, 0f);
-                    GL.Vertex2(Column * 25 + 25, Row * 25 + 25);
+                    GL.Vertex2(Column * ColumnWidth + ColumnWidth, Row * RowHeight + RowHeight);
 
                     // Top Left
                     GL.TexCoord2(0f, 0f);
-                    GL.Vertex2(Column * 25, Row * 25 + 25);
+                    GL.Vertex2(Column * ColumnWidth, Row * RowHeight + RowHeight);
 
                     GL.End();
                 }
@@ -302,7 +311,21 @@ namespace SnakeOnline
 
         public void DrawRemoteUI()
         {
-
+            int RemoteSize = 0;
+        
+            for (int Row = 0; Row < Rows; ++Row)
+            {
+                for (int Column = 0; Column < Columns; ++Column)
+                {
+                    if (RemoteWorldInst.Get(Row, Column) == 1)
+                    {
+                        ++RemoteSize;
+                    }
+                }
+            }
+            
+            RemoteSizeBox.Text = "Size: " + RemoteSize;
+            RemoteSizeBox.SizeToContents();
         }
 
         public void DrawRemoteGame()
@@ -332,19 +355,19 @@ namespace SnakeOnline
 
                     // Bottom Left
                     GL.TexCoord2(0f, 1f);
-                    GL.Vertex2(Column * 25 + (Columns * 25 + 50), Row * 25);
+                    GL.Vertex2(Column * ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight);
 
                     // Bottom Right
                     GL.TexCoord2(1f, 1f);
-                    GL.Vertex2(Column * 25 + 25 + (Columns * 25 + 50), Row * 25);
+                    GL.Vertex2(Column * ColumnWidth + ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight);
 
                     // Top Right
                     GL.TexCoord2(1f, 0f);
-                    GL.Vertex2(Column * 25 + 25 + (Columns * 25 + 50), Row * 25 + 25);
+                    GL.Vertex2(Column * ColumnWidth + ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight + RowHeight);
 
                     // Top Left
                     GL.TexCoord2(0f, 0f);
-                    GL.Vertex2(Column * 25 + (Columns * 25 + 50), Row * 25 + 25);
+                    GL.Vertex2(Column * ColumnWidth + (Columns * ColumnWidth + 50), Row * RowHeight + RowHeight);
 
                     GL.End();
                 }
@@ -497,6 +520,7 @@ namespace SnakeOnline
             base.Dispose();
 
             NetworkedSessionMenuCanvas.Dispose();
+            MenuCanvas.Dispose();
             BaseCanvas.Dispose();
             BaseSkin.Dispose();
             RenderHandler.Dispose();
