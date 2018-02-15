@@ -55,7 +55,11 @@ namespace SnakeOnline
 
             RenderHandler = new Gwen.Renderer.OpenTK();
 
-            BaseSkin = new Gwen.Skin.TexturedBase(RenderHandler, "DefaultSkin.png");
+#if DEBUG
+            BaseSkin = new Gwen.Skin.TexturedBase(RenderHandler, @"../../../Assets/DefaultSkin.png");
+#else
+            BaseSkin = new Gwen.Skin.TexturedBase(RenderHandler, @"Assets/DefaultSkin.png");
+#endif
             BaseSkin.DefaultFont = new Gwen.Font(RenderHandler, "Arial", 10);
 
             BaseCanvas = new Gwen.Control.Canvas(BaseSkin);
@@ -82,18 +86,11 @@ namespace SnakeOnline
 
             RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 735);
 
-            /*
-
             // Stall Calling Thread Until the Interface is Closed.
             while (SessionInterfaceIsOpen)
             {
+                System.Threading.Thread.Yield();
             }
-
-            */
-
-            SessionInterfaceIsOpen = false;
-
-            //RequestedSessionType = 
         }
 
         public void SetupNetworkedSessionMenu()
