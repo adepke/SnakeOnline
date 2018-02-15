@@ -54,7 +54,7 @@ namespace SnakeOnline
                     throw new Exception("Failed to Initialize Window");
                 }
 
-                Window.Run();
+                Window.Run(1.0d, 60.0d);
             });
 
             WindowThread.Start();
