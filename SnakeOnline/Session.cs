@@ -45,7 +45,7 @@ namespace SnakeOnline
                 return false;
             }
 
-            SessionSocket.ReceiveTimeout = 10000;
+            SessionSocket.ReceiveTimeout = 60000;
 
             Remote = EndPoint;
 
