@@ -187,6 +187,8 @@ namespace SnakeOnline
                 Console.WriteLine("Local Game Over");
 
                 ClientGameLoop.Stop();
+                
+                // Submit Score to Server
             }
 
             else
