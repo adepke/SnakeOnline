@@ -28,6 +28,7 @@ namespace SnakeOnline
 
         private Gwen.Control.Canvas NetworkedSessionMenuCanvas;
 
+        private Gwen.Control.ComboBox ServerSelector;
         private Gwen.Control.TextBox CustomServerAddress;
         private Gwen.Control.TextBox CustomServerPort;
 
@@ -126,13 +127,57 @@ namespace SnakeOnline
 
             RequestedSessionType = SessionType.Multiplayer;
 
-            RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 735);
+            //RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 735);
 
             // Stall Calling Thread Until the Interface is Closed.
             while (SessionInterfaceIsOpen)
             {
                 System.Threading.Thread.Yield();
             }
+            
+            // Pseudo Code
+            /*
+            switch (ServerSelector.ActiveElement)
+            {
+                case "Server A":
+                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6700);
+                    break;
+                case "Server B":
+                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6701);
+                    break;
+                case "Server C":
+                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6702);
+                    break;
+                case "Server D":
+                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6703);
+                    break;
+                case "Server E":
+                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6704);
+                    break;
+                case "Server F":
+                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6705);
+                    break;
+                case "Server G":
+                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6706);
+                    break;
+                case "Server H":
+                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6707);
+                    break;
+                case "Server I":
+                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6708);
+                    break;
+                case "Server J":
+                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.24"), 6709);
+                    break;
+                case "Custom Server...":
+                    RequestedEndPoint = new IPEndPoint(IPAddress.Parse(CustomServerAddress.Content), Convert.ToInt32(CustomServerPort.Content));
+                    break;
+                default:
+                    RequestedSessionType = SessionType.Singleplayer;
+                    RequestedEndPoint = null;
+                    break;
+            }
+            */
         }
 
         public void SetupNetworkedSessionMenu()
@@ -142,7 +187,7 @@ namespace SnakeOnline
             ServerSelectorLabel.AutoSizeToContents = true;
             ServerSelectorLabel.SetPosition(50, 0);
 
-            Gwen.Control.ComboBox ServerSelector = new Gwen.Control.ComboBox(NetworkedSessionMenuCanvas);
+            ServerSelector = new Gwen.Control.ComboBox(NetworkedSessionMenuCanvas);
             ServerSelector.AddItem("Server A");
             ServerSelector.AddItem("Server B");
             ServerSelector.AddItem("Server C");
