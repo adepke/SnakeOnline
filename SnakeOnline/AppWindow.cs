@@ -27,8 +27,8 @@ namespace SnakeOnline
 
         private Gwen.Control.Canvas NetworkedSessionMenuCanvas;
 
-        Gwen.Control.TextBox CustomServerAddress;
-        Gwen.Control.TextBox CustomServerPort;
+        private Gwen.Control.TextBox CustomServerAddress;
+        private Gwen.Control.TextBox CustomServerPort;
 
         private bool SessionInterfaceIsOpen = false;
 
