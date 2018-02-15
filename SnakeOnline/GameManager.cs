@@ -108,6 +108,8 @@ namespace SnakeOnline
         {
             if (GameSession.Type == SessionType.Multiplayer)
             {
+                Console.WriteLine("Connecting...\n");
+                
                 if (!GameSession.Connect())
                 {
                     Console.WriteLine("\nFailed to Connect to Presider Server\n");
