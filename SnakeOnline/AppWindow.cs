@@ -51,6 +51,7 @@ namespace SnakeOnline
         private Gwen.Control.TextBox CustomServerAddress;
         private Gwen.Control.TextBox CustomServerPort;
         private Gwen.Control.Button SessionConnect;
+        private Gwen.Control.Button BackButton;
 
         public delegate void EndCallback();
 
@@ -274,10 +275,19 @@ namespace SnakeOnline
             SessionConnect = new Gwen.Control.Button(BaseCanvas);
             SessionConnect.SetText("Connect");
             SessionConnect.SetSize(200, 50);
-            SessionConnect.SetPosition(260, 400);
+            SessionConnect.SetPosition(260, 380);
             SessionConnect.Clicked += (B, Args) =>
             {
                 ActiveScreen = Screen.Connecting;
+            };
+
+            BackButton = new Gwen.Control.Button(BaseCanvas);
+            BackButton.SetText("Back");
+            BackButton.AutoSizeToContents = true;
+            BackButton.SetPosition(50, 450);
+            BackButton.Clicked += (B, Args) =>
+            {
+                ActiveScreen = Screen.Menu;
             };
         }
 
@@ -353,6 +363,7 @@ namespace SnakeOnline
                 CustomServerAddress.Show();
                 CustomServerPort.Show();
                 SessionConnect.Show();
+                BackButton.Show();
             }
 
             else
@@ -363,6 +374,7 @@ namespace SnakeOnline
                 CustomServerAddress.Hide();
                 CustomServerPort.Hide();
                 SessionConnect.Hide();
+                BackButton.Hide();
             }
         }
 
