@@ -80,7 +80,16 @@ namespace SnakeOnline
 
         public void StartSession()
         {
-            GameSession = new Session();
+            if (GameSession != null)
+            {
+                GameSession.Dispose();
+            }
+
+            else
+            {
+                GameSession = new Session();
+            }
+
             GameSession.Type = RequestedSessionType;
 
             if (GameSession.Type == SessionType.Multiplayer)
