@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeOnline", "SnakeOnline\SnakeOnline.csproj", "{4D3B7BDA-76FD-4EFC-9BC8-EB44C8DA0194}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeOnlineServer", "SnakeOnlineServer\SnakeOnlineServer.csproj", "{549A10E3-5C2B-4ABC-80DE-22060D42ADAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

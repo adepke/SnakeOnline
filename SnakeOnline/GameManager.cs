@@ -21,6 +21,9 @@ namespace SnakeOnline
         private bool SessionReady = false;
         private bool InSession = false;
 
+        private ScoreService Scoring;
+        private bool ScoreServiceOnline;
+
         private SessionType RequestedSessionType;
         private IPEndPoint RequestedEndPoint;
 
@@ -71,6 +74,23 @@ namespace SnakeOnline
                     InSession = false;
                     SessionReady = false;
                 });
+
+            ScoreServiceOnline = true;
+
+            Scoring = new ScoreService();
+            if (!Scoring.Initialize())
+            {
+                ScoreServiceOnline = false;
+            }
+
+            IPEndPoint ScoringServiceEndPoint = new IPEndPoint(IPAddress.Parse(""), 6710);
+
+            if (!ScoreServiceOnline || !Scoring.Connect(ScoringServiceEndPoint))
+            {
+                ScoreServiceOnline = false;
+
+                Scoring.Dispose();
+            }
         }
 
         public void RequestNewSession()
@@ -221,8 +241,12 @@ namespace SnakeOnline
                 Console.WriteLine("Local Game Over");
 
                 ClientGameLoop.Stop();
-                
-                // Submit Score to Server
+
+                if (ScoreServiceOnline)
+                {
+                    // @todo: Implement GUI Element for Getting Name.
+                    Scoring.Submit("Test", LocalView.SnakeInst.GetSize());
+                }
             }
 
             else
