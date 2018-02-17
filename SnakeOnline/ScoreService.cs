@@ -75,5 +75,10 @@ namespace SnakeOnline
             ServerSocket.Shutdown(SocketShutdown.Both);
             ServerSocket.Dispose();
         }
+
+        public void DisposeFromInitializationError()
+        {
+            ServerSocket.Dispose();
+        }
     }
 }
