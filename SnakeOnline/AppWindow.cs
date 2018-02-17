@@ -166,34 +166,34 @@ namespace SnakeOnline
                 switch (ServerSelector.SelectedItem.Text)
                 {
                     case "Server A":
-                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6700);
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("10.16.1.100"), 6700);
                         break;
                     case "Server B":
-                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6701);
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("10.16.1.100"), 6701);
                         break;
                     case "Server C":
-                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6702);
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("10.16.1.100"), 6702);
                         break;
                     case "Server D":
-                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6703);
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("10.16.1.100"), 6703);
                         break;
                     case "Server E":
-                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6704);
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("10.16.1.100"), 6704);
                         break;
                     case "Server F":
-                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6705);
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("10.16.1.100"), 6705);
                         break;
                     case "Server G":
-                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6706);
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("10.16.1.100"), 6706);
                         break;
                     case "Server H":
-                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6707);
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("10.16.1.100"), 6707);
                         break;
                     case "Server I":
-                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6708);
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("10.16.1.100"), 6708);
                         break;
                     case "Server J":
-                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.29"), 6709);
+                        RequestedEndPoint = new IPEndPoint(IPAddress.Parse("10.16.1.100"), 6709);
                         break;
                     case "Custom Server...":
                         RequestedEndPoint = new IPEndPoint(IPAddress.Parse(CustomServerAddress.Text), Convert.ToInt32(CustomServerPort.Text));

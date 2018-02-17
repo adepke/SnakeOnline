@@ -83,7 +83,7 @@ namespace SnakeOnline
                 ScoreServiceOnline = false;
             }
 
-            IPEndPoint ScoringServiceEndPoint = new IPEndPoint(IPAddress.Parse(""), 6710);
+            IPEndPoint ScoringServiceEndPoint = new IPEndPoint(IPAddress.Parse("10.16.1.100"), 6710);
 
             if (!ScoreServiceOnline || !Scoring.Connect(ScoringServiceEndPoint))
             {
