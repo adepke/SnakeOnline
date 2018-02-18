@@ -75,6 +75,15 @@ namespace SnakeOnline
                     SessionReady = false;
                 });
 
+            Window.GetScoresCallback(
+                () =>
+                {
+                    if (ScoreServiceOnline)
+                    {
+                        Window.FillHighscores(Scoring.GetHighscores());
+                    }
+                });
+
             ScoreServiceOnline = true;
 
             Scoring = new ScoreService();

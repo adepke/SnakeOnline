@@ -17,6 +17,7 @@ namespace SnakeOnline
         Game,
         Menu,
         NetworkedSessionMenu,
+        Highscores,
         Connecting,
     }
 
@@ -29,7 +30,7 @@ namespace SnakeOnline
         private SessionType ActiveSessionType;
 
         internal Screen ActiveScreen = Screen.Menu;
-        private Screen LastActiveScreen = Screen.Menu;
+        private Screen LastActiveScreen = Screen.Game;  // Set this to Anything Other Than ActiveScreen.
 
         private Gwen.Renderer.OpenTK RenderHandler;
         private Gwen.Input.OpenTK InputHandler;
@@ -44,6 +45,7 @@ namespace SnakeOnline
         // Menu Screen.
         private Gwen.Control.Button SingleplayerButton;
         private Gwen.Control.Button MultiplayerButton;
+        private Gwen.Control.Button HighscoresButton;
 
         // Networked Session Menu Screen.
         private Gwen.Control.Label ServerSelectorLabel;
@@ -54,9 +56,17 @@ namespace SnakeOnline
         private Gwen.Control.Button SessionConnect;
         private Gwen.Control.Button BackButton;
 
+        // Highscores Screen.
+        private Gwen.Control.Label NoDataFailure;
+        private Gwen.Control.Label TopScoresLabel;
+        private Gwen.Control.ListBox TopScoresList;
+        private Gwen.Control.Button TopScoresBackButton;
+
         public delegate void EndCallback();
+        public delegate void RetrieveHighscoresCallback();
 
         private EndCallback SessionLeaveCallback;
+        private RetrieveHighscoresCallback GetHighscoresCallback;
 
         private int Rows;
         private int Columns;
@@ -104,6 +114,7 @@ namespace SnakeOnline
 
             SetupMenu();
             SetupNetworkedSessionMenu();
+            SetupHighscores();
 
             Ready = true;
 
@@ -146,6 +157,12 @@ namespace SnakeOnline
             SessionLeaveCallback = Callback;
         }
 
+        // Used to Fill Highscores.
+        public void GetScoresCallback(RetrieveHighscoresCallback Callback)
+        {
+            GetHighscoresCallback = Callback;
+        }
+
         public void SessionInterface(out SessionType RequestedSessionType, out IPEndPoint RequestedEndPoint)
         {
             ActiveScreen = Screen.Menu;
@@ -155,7 +172,7 @@ namespace SnakeOnline
             RequestedEndPoint = null;
 
             // Stall Calling Thread Until the Interface is Closed.
-            while (ActiveScreen == Screen.Menu || ActiveScreen == Screen.NetworkedSessionMenu)
+            while (ActiveScreen == Screen.Menu || ActiveScreen == Screen.NetworkedSessionMenu || ActiveScreen == Screen.Highscores)
             {
                 System.Threading.Thread.Yield();
             }
@@ -234,6 +251,16 @@ namespace SnakeOnline
                 ActiveScreen = Screen.NetworkedSessionMenu;
                 ActiveSessionType = SessionType.Multiplayer;
             };
+
+            HighscoresButton = new Gwen.Control.Button(BaseCanvas);
+            HighscoresButton.SetText("Highscores");
+            HighscoresButton.SetSize(300, 100);
+            HighscoresButton.SetPosition(200, 380);
+            HighscoresButton.Clicked += (B, Args) =>
+            {
+                GetHighscoresCallback();
+                ActiveScreen = Screen.Highscores;
+            };
         }
 
         public void SetupNetworkedSessionMenu()
@@ -292,6 +319,32 @@ namespace SnakeOnline
             };
         }
 
+        public void SetupHighscores()
+        {
+            NoDataFailure = new Gwen.Control.Label(BaseCanvas);
+            NoDataFailure.SetText("No Highscore Data Retrieved");
+            NoDataFailure.AutoSizeToContents = true;
+            NoDataFailure.SetPosition(100, 150);
+
+            TopScoresLabel = new Gwen.Control.Label(BaseCanvas);
+            TopScoresLabel.SetText("Highscores");
+            TopScoresLabel.SetSize(100, 50);
+            TopScoresLabel.SetPosition(200, 50);
+
+            TopScoresList = new Gwen.Control.ListBox(BaseCanvas);
+            TopScoresList.SetSize(250, 300);
+            TopScoresList.SetPosition(300, 70);
+
+            TopScoresBackButton = new Gwen.Control.Button(BaseCanvas);
+            TopScoresBackButton.SetText("Back");
+            TopScoresBackButton.AutoSizeToContents = true;
+            TopScoresBackButton.SetPosition(50, 350);
+            TopScoresBackButton.Clicked += (B, Args) =>
+            {
+                ActiveScreen = Screen.Menu;
+            };
+        }
+
         public void SetupLocal(World LocalWorldInst, Snake LocalSnakeInst)
         {
             this.LocalWorldInst = LocalWorldInst;
@@ -322,6 +375,17 @@ namespace SnakeOnline
             RemoteSizeBox.SetPosition(Columns * ColumnWidth + 50, Rows * RowHeight);
         }
 
+        public void FillHighscores(List<Highscore> Highscores)
+        {
+            if (Highscores != null)
+            {
+                foreach (Highscore Score in Highscores)
+                {
+                    TopScoresList.AddRow(Score.Name + "  -  " + Score.Score);
+                }
+            }
+        }
+
         protected void ShowGame(bool Show = true)
         {
             if (Show)
@@ -345,12 +409,14 @@ namespace SnakeOnline
             {
                 SingleplayerButton.Show();
                 MultiplayerButton.Show();
+                HighscoresButton.Show();
             }
 
             else
             {
                 SingleplayerButton.Hide();
                 MultiplayerButton.Hide();
+                HighscoresButton.Hide();
             }
         }
 
@@ -379,6 +445,33 @@ namespace SnakeOnline
             }
         }
 
+        protected void ShowHighscores(bool Show = true)
+        {
+            if (Show)
+            {
+                if (TopScoresList.RowCount > 0)
+                {
+                    TopScoresLabel.Show();
+                    TopScoresList.Show();
+                    TopScoresBackButton.Show();
+                }
+
+                else
+                {
+                    NoDataFailure.Show();
+                    TopScoresBackButton.Show();
+                }
+            }
+
+            else
+            {
+                NoDataFailure.Hide();
+                TopScoresLabel.Hide();
+                TopScoresList.Hide();
+                TopScoresBackButton.Hide();
+            }
+        }
+
         protected void ShowConnecting(bool Show = true)
         {
             if (Show)
@@ -400,24 +493,35 @@ namespace SnakeOnline
                     ShowGame(true);
                     ShowMenu(false);
                     ShowNetworkedSessionMenu(false);
+                    ShowHighscores(false);
                     ShowConnecting(false);
                     break;
                 case Screen.Menu:
                     ShowGame(false);
                     ShowMenu(true);
                     ShowNetworkedSessionMenu(false);
+                    ShowHighscores(false);
                     ShowConnecting(false);
                     break;
                 case Screen.NetworkedSessionMenu:
                     ShowGame(false);
                     ShowMenu(false);
                     ShowNetworkedSessionMenu(true);
+                    ShowHighscores(false);
+                    ShowConnecting(false);
+                    break;
+                case Screen.Highscores:
+                    ShowGame(false);
+                    ShowMenu(false);
+                    ShowNetworkedSessionMenu(false);
+                    ShowHighscores(true);
                     ShowConnecting(false);
                     break;
                 case Screen.Connecting:
                     ShowGame(false);
                     ShowMenu(false);
                     ShowNetworkedSessionMenu(false);
+                    ShowHighscores(false);
                     ShowConnecting(true);
                     break;
             }
@@ -674,13 +778,13 @@ namespace SnakeOnline
                 System.Threading.Thread.Sleep(100);
 
                 LastActiveScreen = ActiveScreen;
+
+                ShowScreen(ActiveScreen);
             }
 
             base.OnRenderFrame(e);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-            ShowScreen(ActiveScreen);
 
             if (ActiveScreen == Screen.Game)
             {
