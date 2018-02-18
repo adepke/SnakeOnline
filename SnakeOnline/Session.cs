@@ -134,7 +134,10 @@ namespace SnakeOnline
 
         public void Dispose()
         {
-            SessionSocket.Dispose();
+            if (SessionSocket != null)
+            {
+                SessionSocket.Dispose();
+            }
         }
     }
 }

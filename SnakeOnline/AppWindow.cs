@@ -29,6 +29,7 @@ namespace SnakeOnline
         private SessionType ActiveSessionType;
 
         internal Screen ActiveScreen = Screen.Menu;
+        private Screen LastActiveScreen = Screen.Menu;
 
         private Gwen.Renderer.OpenTK RenderHandler;
         private Gwen.Input.OpenTK InputHandler;
@@ -667,6 +668,14 @@ namespace SnakeOnline
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
+            // Add Slight Delay to Screen Changes to Give Slower Machines Time to Prepare Everything.
+            if (ActiveScreen != LastActiveScreen)
+            {
+                System.Threading.Thread.Sleep(100);
+
+                LastActiveScreen = ActiveScreen;
+            }
+
             base.OnRenderFrame(e);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
