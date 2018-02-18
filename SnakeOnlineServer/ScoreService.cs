@@ -100,7 +100,7 @@ namespace SnakeOnlineServer
                 ScoreList.RemoveAt(TopEntryIndex);
                 NameList.RemoveAt(TopEntryIndex);
 
-                Result.Add(TopEntryName + '|' + TopEntryScore);
+                Result.Add('&' + TopEntryName + '|' + TopEntryScore);
             }
 
             return Result;
