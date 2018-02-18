@@ -218,6 +218,8 @@ namespace SnakeOnlineServer
 
             SocketTrackedAsyncArgs AsyncArgs = new SocketTrackedAsyncArgs();
             AsyncArgs.Client = NewClient;
+            byte[] Buffer = new byte[1024];
+            AsyncArgs.SetBuffer(Buffer, 0, Buffer.Length);
             AsyncArgs.Completed += Process;
             NewClient.ReceiveAsync(AsyncArgs);
 
