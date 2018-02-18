@@ -47,7 +47,7 @@ namespace SnakeOnline
                 return false;
             }
 
-            return false;
+            return true;
         }
 
         internal bool Submit(string Name, int Score)
