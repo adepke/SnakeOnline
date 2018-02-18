@@ -126,9 +126,15 @@ namespace SnakeOnlineServer
 
                 byte[] EntriesBuffer = new byte[128];
 
-                foreach (string ThisEntry in Entries)
+                int Offset = 0;
+
+                for (int Iter = 0; Iter < Entries.Count; ++Iter)
                 {
-                    Encoding.ASCII.GetBytes(ThisEntry);
+                    byte[] EntryBuffer = Encoding.ASCII.GetBytes(Entries[Iter]);
+
+                    System.Buffer.BlockCopy(EntryBuffer, 0, EntriesBuffer, Offset, EntryBuffer.Length);
+
+                    Offset += EntryBuffer.Length;
                 }
 
                 Console.WriteLine("Client Requested Highscores At: " + ClientEndPoint.Address + ':' + ClientEndPoint.Port);
