@@ -175,7 +175,7 @@ namespace SnakeOnlineServer
             StreamWriter EntryWriter = new StreamWriter(ScoreDatabase);
             long EOF = ScoreDatabase.Length;
             ScoreDatabase.Seek(EOF, SeekOrigin.Begin);
-            EntryWriter.WriteLine(Encoding.ASCII.GetBytes(Entry));
+            EntryWriter.WriteLine(Entry);
             EntryWriter.Flush();
             ScoreDatabase.Flush();
             EntryWriter.Close();
