@@ -112,6 +112,7 @@ namespace SnakeOnlineServer
             IPEndPoint ClientEndPoint = ((IPEndPoint)TrackedArgs.Client.RemoteEndPoint);
 
             string ReceivedString = Encoding.ASCII.GetString(Args.Buffer);
+            ReceivedString = ReceivedString.Replace("\0", String.Empty);
 
             if (ReceivedString == "GETTOP10SCORES")
             {
@@ -158,7 +159,7 @@ namespace SnakeOnlineServer
 
             string Name = NameSearch.Substring(0, Position);
 
-            int Score = Convert.ToInt32(ReceivedString.Substring(Position + 7));
+            int Score = Convert.ToInt32(NameSearch.Substring(Position + 7));
             if (Score == 0)
             {
                 return;
