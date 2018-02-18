@@ -14,6 +14,8 @@ namespace SnakeOnlineServer
         private Socket ServiceSocket;
 
         private FileStream ScoreDatabase;
+        private StreamReader ScoreReader;
+        private StreamWriter ScoreWriter;
 
         private System.Threading.SpinLock Lock;
 
@@ -49,6 +51,9 @@ namespace SnakeOnlineServer
                 Console.WriteLine("Failed to Open or Create File 'ScoreDatabase.dat': " + e.Message + "\n");
             }
 
+            ScoreReader = new StreamReader(ScoreDatabase);
+            ScoreWriter = new StreamWriter(ScoreDatabase);
+
             Clients = new List<Socket>();
 
             Lock = new System.Threading.SpinLock();
@@ -64,10 +69,8 @@ namespace SnakeOnlineServer
             bool AquiredLock = new bool();
             Lock.Enter(ref AquiredLock);
 
-            StreamReader EntryReader = new StreamReader(ScoreDatabase);
-
             string CurrentLine;
-            while ((CurrentLine = EntryReader.ReadLine()) != null)
+            while ((CurrentLine = ScoreReader.ReadLine()) != null)
             {
                 for (int Iter = 0; Iter < CurrentLine.Length; ++Iter)
                 {
@@ -78,9 +81,6 @@ namespace SnakeOnlineServer
                     }
                 }
             }
-
-            EntryReader.Close();
-            EntryReader.Dispose();
 
             Lock.Exit();
 
@@ -113,6 +113,12 @@ namespace SnakeOnlineServer
 
             string ReceivedString = Encoding.ASCII.GetString(Args.Buffer);
             ReceivedString = ReceivedString.Replace("\0", String.Empty);
+
+            // Don't Process Disconnect Messages.
+            if (ReceivedString == "")
+            {
+                return;
+            }
 
             if (ReceivedString == "GETTOP10SCORES")
             {
@@ -172,16 +178,21 @@ namespace SnakeOnlineServer
             bool AquiredLock = new bool();
             Lock.Enter(ref AquiredLock);
 
-            StreamWriter EntryWriter = new StreamWriter(ScoreDatabase);
             long EOF = ScoreDatabase.Length;
             ScoreDatabase.Seek(EOF, SeekOrigin.Begin);
-            EntryWriter.WriteLine(Entry);
-            EntryWriter.Flush();
+            ScoreWriter.WriteLine(Entry);
+            ScoreWriter.Flush();
             ScoreDatabase.Flush();
-            EntryWriter.Close();
-            EntryWriter.Dispose();
 
             Lock.Exit();
+
+            // Reset Receiving on this Socket.
+            SocketTrackedAsyncArgs AsyncArgs = new SocketTrackedAsyncArgs();
+            AsyncArgs.Client = TrackedArgs.Client;
+            byte[] Buffer = new byte[1024];
+            AsyncArgs.SetBuffer(Buffer, 0, Buffer.Length);
+            AsyncArgs.Completed += Process;
+            TrackedArgs.Client.ReceiveAsync(AsyncArgs);
         }
 
         public bool Update()
@@ -229,6 +240,12 @@ namespace SnakeOnlineServer
 
         public void Shutdown()
         {
+            ScoreReader.Close();
+            ScoreReader.Dispose();
+
+            ScoreWriter.Close();
+            ScoreWriter.Dispose();
+
             ScoreDatabase.Close();
             ScoreDatabase.Dispose();
 
