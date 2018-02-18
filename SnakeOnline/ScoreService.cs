@@ -8,6 +8,12 @@ using System.Net.Sockets;
 
 namespace SnakeOnline
 {
+    public struct Highscore
+    {
+        public string Name;
+        public int Score;
+    }
+
     internal class ScoreService : IDisposable
     {
         private Socket ServerSocket;
@@ -67,6 +73,78 @@ namespace SnakeOnline
             }
 
             return true;
+        }
+
+        internal List<Highscore> GetHighscores()
+        {
+            try
+            {
+                ServerSocket.Send(Encoding.ASCII.GetBytes("GETTOP10SCORES"));
+            }
+
+            catch (SocketException e)
+            {
+                Console.WriteLine("Highscore Retrieval at Send Failure: " + e.Message);
+
+                return default(List<Highscore>);
+            }
+
+            byte[] ScoreBuffer = new byte[128];
+
+            try
+            {
+                ServerSocket.Receive(ScoreBuffer);
+            }
+
+            catch (SocketException e)
+            {
+                Console.WriteLine("Highscore Retrieval at Receive Failure: " + e.Message);
+
+                return default(List<Highscore>);
+            }
+
+            List<Highscore> Result = new List<Highscore>();
+
+            string ScoreList = Encoding.ASCII.GetString(ScoreBuffer);
+            ScoreList = ScoreList.Replace("\0", String.Empty);
+
+            for (int Iter = 0; Iter < ScoreList.Length; ++Iter)
+            {
+                string Name = "ERROR";
+                string Score = "0";
+
+                // '&' Signals New Entry
+                if (ScoreList[Iter] == '&')
+                {
+                    for (int PipeIter = 1; PipeIter < 64; ++PipeIter)
+                    {
+                        if (ScoreList[Iter + PipeIter] == '|')
+                        {
+                            Name = ScoreList.Substring(Iter + 1, PipeIter);
+
+                            for (int NextEntryIter = 1; NextEntryIter < 32; ++NextEntryIter)
+                            {
+                                if (ScoreList[Iter + PipeIter + NextEntryIter] == '&')
+                                {
+                                    Score = ScoreList.Substring(Iter + PipeIter + 1, PipeIter);
+
+                                    break;
+                                }
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                Highscore EntryHighscore;
+                EntryHighscore.Name = Name;
+                EntryHighscore.Score = Convert.ToInt32(Score);
+
+                Result.Add(EntryHighscore);
+            }
+
+            return Result;
         }
 
         public void Dispose()
