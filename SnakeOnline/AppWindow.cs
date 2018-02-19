@@ -413,11 +413,13 @@ namespace SnakeOnline
 
         public void FillHighscores(List<Highscore> Highscores)
         {
+            TopScoresList.RemoveAllRows();
+
             if (Highscores != null)
             {
-                foreach (Highscore Score in Highscores)
+                for (int Iter = 0; Iter < Highscores.Count; ++Iter)
                 {
-                    TopScoresList.AddRow(Score.Name + "      -      " + Score.Score);
+                    TopScoresList.AddRow(Highscores[Iter].Name + "      -      " + Highscores[Iter].Score);
                 }
             }
         }

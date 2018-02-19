@@ -105,11 +105,25 @@ namespace SnakeOnline
                                 if (Iter + PipeIter + NextEntryIter >= ScoreList.Length)
                                 {
                                     Score = ScoreList.Substring(Iter + PipeIter + 1, ScoreList.Length - Iter - PipeIter - 1);
+
+                                    Highscore EntryHighscore;
+                                    EntryHighscore.Name = Name;
+                                    EntryHighscore.Score = Convert.ToInt32(Score);
+
+                                    Highscores.Add(EntryHighscore);
+
+                                    break;
                                 }
 
                                 else if (ScoreList[Iter + PipeIter + NextEntryIter] == '&')
                                 {
                                     Score = ScoreList.Substring(Iter + PipeIter + 1, NextEntryIter - 1);
+
+                                    Highscore EntryHighscore;
+                                    EntryHighscore.Name = Name;
+                                    EntryHighscore.Score = Convert.ToInt32(Score);
+
+                                    Highscores.Add(EntryHighscore);
 
                                     break;
                                 }
@@ -119,12 +133,6 @@ namespace SnakeOnline
                         }
                     }
                 }
-
-                Highscore EntryHighscore;
-                EntryHighscore.Name = Name;
-                EntryHighscore.Score = Convert.ToInt32(Score);
-
-                Highscores.Add(EntryHighscore);
             }
         }
 
