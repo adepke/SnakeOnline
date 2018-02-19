@@ -120,13 +120,19 @@ namespace SnakeOnline
                     {
                         if (ScoreList[Iter + PipeIter] == '|')
                         {
-                            Name = ScoreList.Substring(Iter + 1, PipeIter);
+                            Name = ScoreList.Substring(Iter + 1, PipeIter - 1);
 
                             for (int NextEntryIter = 1; NextEntryIter < 32; ++NextEntryIter)
                             {
-                                if (ScoreList[Iter + PipeIter + NextEntryIter] == '&')
+                                // Prevent Out of Bounds Exception.
+                                if (Iter + PipeIter + NextEntryIter >= ScoreList.Length)
                                 {
-                                    Score = ScoreList.Substring(Iter + PipeIter + 1, PipeIter);
+                                    Score = ScoreList.Substring(Iter + PipeIter + 1, ScoreList.Length - Iter - PipeIter - 1);
+                                }
+
+                                else if (ScoreList[Iter + PipeIter + NextEntryIter] == '&')
+                                {
+                                    Score = ScoreList.Substring(Iter + PipeIter + 1, NextEntryIter - 1);
 
                                     break;
                                 }
