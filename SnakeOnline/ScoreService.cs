@@ -20,6 +20,8 @@ namespace SnakeOnline
 
         private List<Highscore> Highscores;
 
+        private bool HighscoresReady;
+
         internal bool Initialize()
         {
             try
@@ -134,6 +136,8 @@ namespace SnakeOnline
                     }
                 }
             }
+
+            HighscoresReady = true;
         }
 
         internal List<Highscore> GetHighscores()
@@ -168,7 +172,7 @@ namespace SnakeOnline
                 return default(List<Highscore>);
             }
 
-            while (Highscores == null)
+            while (!HighscoresReady)
             {
                 System.Threading.Thread.Yield();
             }
