@@ -23,6 +23,7 @@ namespace SnakeOnline
             try
             {
                 ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                ServerSocket.ReceiveTimeout = 5000;
 
                 IPEndPoint LocalEndPoint = new IPEndPoint(IPAddress.Any, 0);
 
