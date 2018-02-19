@@ -18,6 +18,8 @@ namespace SnakeOnline
     {
         private Socket ServerSocket;
 
+        private List<Highscore> Highscores;
+
         internal bool Initialize()
         {
             try
@@ -76,37 +78,11 @@ namespace SnakeOnline
             return true;
         }
 
-        internal List<Highscore> GetHighscores()
+        private void HighscoresReceived(object Sender, SocketAsyncEventArgs Args)
         {
-            try
-            {
-                ServerSocket.Send(Encoding.ASCII.GetBytes("GETTOP10SCORES"));
-            }
+            Highscores = new List<Highscore>();
 
-            catch (SocketException e)
-            {
-                Console.WriteLine("Highscore Retrieval at Send Failure: " + e.Message);
-
-                return default(List<Highscore>);
-            }
-
-            byte[] ScoreBuffer = new byte[256];
-
-            try
-            {
-                ServerSocket.Receive(ScoreBuffer);
-            }
-
-            catch (SocketException e)
-            {
-                Console.WriteLine("Highscore Retrieval at Receive Failure: " + e.Message);
-
-                return default(List<Highscore>);
-            }
-
-            List<Highscore> Result = new List<Highscore>();
-
-            string ScoreList = Encoding.ASCII.GetString(ScoreBuffer);
+            string ScoreList = Encoding.ASCII.GetString(Args.Buffer);
             ScoreList = ScoreList.Replace("\0", String.Empty);
 
             for (int Iter = 0; Iter < ScoreList.Length; ++Iter)
@@ -148,10 +124,48 @@ namespace SnakeOnline
                 EntryHighscore.Name = Name;
                 EntryHighscore.Score = Convert.ToInt32(Score);
 
-                Result.Add(EntryHighscore);
+                Highscores.Add(EntryHighscore);
+            }
+        }
+
+        internal List<Highscore> GetHighscores()
+        {
+            // Setup Receiving Before Sending.
+            SocketAsyncEventArgs AsyncArgs = new SocketAsyncEventArgs();
+            byte[] ScoreBuffer = new byte[256];
+            AsyncArgs.SetBuffer(ScoreBuffer, 0, ScoreBuffer.Length);
+            AsyncArgs.Completed += HighscoresReceived;
+
+            try
+            {
+                ServerSocket.ReceiveAsync(AsyncArgs);
             }
 
-            return Result;
+            catch (SocketException e)
+            {
+                Console.WriteLine("Highscore Retrieval at Receive Failure: " + e.Message);
+
+                return default(List<Highscore>);
+            }
+
+            try
+            {
+                ServerSocket.Send(Encoding.ASCII.GetBytes("GETTOP10SCORES"));
+            }
+
+            catch (SocketException e)
+            {
+                Console.WriteLine("Highscore Retrieval at Send Failure: " + e.Message);
+
+                return default(List<Highscore>);
+            }
+
+            while (Highscores == null)
+            {
+                System.Threading.Thread.Yield();
+            }
+
+            return Highscores;
         }
 
         public void Dispose()

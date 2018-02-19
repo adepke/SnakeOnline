@@ -148,8 +148,6 @@ namespace SnakeOnlineServer
 
                 Console.WriteLine("Client Requested Highscores At: " + ClientEndPoint.Address + ':' + ClientEndPoint.Port);
 
-                Thread.Sleep(200);  // Sleep to Let Client Call Receive() in Time.
-
                 TrackedArgs.Client.Send(EntriesBuffer);
 
                 return;
