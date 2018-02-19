@@ -78,6 +78,10 @@ namespace SnakeOnlineServer
             bool AquiredLock = new bool();
             Lock.Enter(ref AquiredLock);
 
+            // Reset to Beginning of File.
+            ScoreDatabase.Position = 0;
+            ScoreReader.DiscardBufferedData();
+
             string CurrentLine;
             while ((CurrentLine = ScoreReader.ReadLine()) != null)
             {

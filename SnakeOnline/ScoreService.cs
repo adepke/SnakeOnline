@@ -27,7 +27,7 @@ namespace SnakeOnline
             try
             {
                 ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                ServerSocket.ReceiveTimeout = 5000;
+                //ServerSocket.ReceiveTimeout = 5000;
 
                 IPEndPoint LocalEndPoint = new IPEndPoint(IPAddress.Any, 0);
 
@@ -142,6 +142,8 @@ namespace SnakeOnline
 
         internal List<Highscore> GetHighscores()
         {
+            HighscoresReady = false;
+
             // Setup Receiving Before Sending.
             SocketAsyncEventArgs AsyncArgs = new SocketAsyncEventArgs();
             byte[] ScoreBuffer = new byte[256];
