@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.IO;
+using System.Threading;
+using System.Timers;
 
 namespace SnakeOnlineServer
 {
@@ -17,9 +19,11 @@ namespace SnakeOnlineServer
         private StreamReader ScoreReader;
         private StreamWriter ScoreWriter;
 
-        private System.Threading.SpinLock Lock;
+        private SpinLock Lock;
 
         private List<Socket> Clients;
+
+        private bool NewData = false;
 
         public bool Initialize(int Port)
         {
@@ -56,7 +60,12 @@ namespace SnakeOnlineServer
 
             Clients = new List<Socket>();
 
-            Lock = new System.Threading.SpinLock();
+            Lock = new SpinLock();
+
+            System.Timers.Timer FlushTimer = new System.Timers.Timer(60000);
+            FlushTimer.AutoReset = true;
+            FlushTimer.Elapsed += new ElapsedEventHandler(Flush);
+            FlushTimer.Enabled = true;
 
             return true;
         }
@@ -139,7 +148,7 @@ namespace SnakeOnlineServer
 
                 Console.WriteLine("Client Requested Highscores At: " + ClientEndPoint.Address + ':' + ClientEndPoint.Port);
 
-                System.Threading.Thread.Sleep(200);  // Sleep to Let Client Call Receive() in Time.
+                Thread.Sleep(200);  // Sleep to Let Client Call Receive() in Time.
 
                 TrackedArgs.Client.Send(EntriesBuffer);
 
@@ -190,9 +199,11 @@ namespace SnakeOnlineServer
             ScoreDatabase.Seek(EOF, SeekOrigin.Begin);
             ScoreWriter.WriteLine(Entry);
             ScoreWriter.Flush();
-            ScoreDatabase.Flush();
+            //ScoreDatabase.Flush();
 
             Lock.Exit();
+
+            NewData = true;
 
             // Reset Receiving on this Socket.
             SocketTrackedAsyncArgs AsyncArgs = new SocketTrackedAsyncArgs();
@@ -201,6 +212,21 @@ namespace SnakeOnlineServer
             AsyncArgs.SetBuffer(Buffer, 0, Buffer.Length);
             AsyncArgs.Completed += Process;
             TrackedArgs.Client.ReceiveAsync(AsyncArgs);
+        }
+
+        private void Flush(object Sender, ElapsedEventArgs Args)
+        {
+            if (NewData)
+            {
+                bool AquiredLock = new bool();
+                Lock.Enter(ref AquiredLock);
+
+                ScoreDatabase.Flush();
+
+                Lock.Exit();
+
+                NewData = false;
+            }
         }
 
         public bool Update()
