@@ -124,7 +124,7 @@ namespace SnakeOnlineServer
             {
                 List<string> Entries = GetHighestScores(10);
 
-                byte[] EntriesBuffer = new byte[128];
+                byte[] EntriesBuffer = new byte[256];
 
                 int Offset = 0;
 

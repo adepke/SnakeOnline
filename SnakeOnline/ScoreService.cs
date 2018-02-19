@@ -89,7 +89,7 @@ namespace SnakeOnline
                 return default(List<Highscore>);
             }
 
-            byte[] ScoreBuffer = new byte[128];
+            byte[] ScoreBuffer = new byte[256];
 
             try
             {
