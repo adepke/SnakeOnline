@@ -68,6 +68,9 @@ namespace SnakeOnline
             // Wait Until Window is Ready for Usage.
             while (!Window.Ready) { Thread.Yield(); }
 
+            // Wait Until the User has Entered a Username.
+            while (Window.ActiveScreen != Screen.Menu) { Thread.Yield(); }
+
             Window.SessionEndCallback(
                 () =>
                 {
@@ -257,7 +260,7 @@ namespace SnakeOnline
                 if (ScoreServiceOnline)
                 {
                     // @todo: Implement GUI Element for Getting Name.
-                    Scoring.Submit("Test", LocalView.SnakeInst.GetSize());
+                    Scoring.Submit(Window.GetUsername(), LocalView.SnakeInst.GetSize());
                 }
             }
 

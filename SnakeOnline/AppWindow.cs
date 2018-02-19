@@ -18,6 +18,7 @@ namespace SnakeOnline
         Menu,
         NetworkedSessionMenu,
         Highscores,
+        UsernameMenu,
         Connecting,
     }
 
@@ -29,7 +30,7 @@ namespace SnakeOnline
 
         private SessionType ActiveSessionType;
 
-        internal Screen ActiveScreen = Screen.Menu;
+        internal Screen ActiveScreen = Screen.UsernameMenu;
         private Screen LastActiveScreen = Screen.Game;  // Set this to Anything Other Than ActiveScreen.
 
         private Gwen.Renderer.OpenTK RenderHandler;
@@ -61,6 +62,11 @@ namespace SnakeOnline
         private Gwen.Control.Label TopScoresLabel;
         private Gwen.Control.ListBox TopScoresList;
         private Gwen.Control.Button TopScoresBackButton;
+
+        // Username Menu.
+        private Gwen.Control.Label UsernameLabel;
+        private Gwen.Control.TextBox UsernameBox;
+        private Gwen.Control.Button UsernameContinue;
 
         public delegate void EndCallback();
         public delegate void RetrieveHighscoresCallback();
@@ -115,6 +121,7 @@ namespace SnakeOnline
             SetupMenu();
             SetupNetworkedSessionMenu();
             SetupHighscores();
+            SetupUsernameMenu();
 
             Ready = true;
 
@@ -230,6 +237,11 @@ namespace SnakeOnline
             }
         }
 
+        public string GetUsername()
+        {
+            return UsernameBox.Text;
+        }
+
         public void SetupMenu()
         {
             SingleplayerButton = new Gwen.Control.Button(BaseCanvas);
@@ -342,6 +354,30 @@ namespace SnakeOnline
             TopScoresBackButton.Clicked += (B, Args) =>
             {
                 ActiveScreen = Screen.Menu;
+            };
+        }
+
+        private void SetupUsernameMenu()
+        {
+            UsernameLabel = new Gwen.Control.Label(BaseCanvas);
+            UsernameLabel.SetText("Enter Desired Username:" + "\n(This is how your score will be represented in the Highscores page.)");
+            UsernameLabel.AutoSizeToContents = true;
+            UsernameLabel.SetPosition(300, 150);
+
+            UsernameBox = new Gwen.Control.TextBox(BaseCanvas);
+            UsernameBox.SetSize(180, 35);
+            UsernameBox.SetPosition(300, 200);
+
+            UsernameContinue = new Gwen.Control.Button(BaseCanvas);
+            UsernameContinue.SetText("Continue");
+            UsernameContinue.SetSize(150, 30);
+            UsernameContinue.SetPosition(300, 260);
+            UsernameContinue.Clicked += (B, Args) =>
+            {
+                if (UsernameBox.Text != "")
+                {
+                    ActiveScreen = Screen.Menu;
+                }
             };
         }
 
@@ -472,6 +508,23 @@ namespace SnakeOnline
             }
         }
 
+        protected void ShowUsernameMenu(bool Show = true)
+        {
+            if (Show)
+            {
+                UsernameLabel.Show();
+                UsernameBox.Show();
+                UsernameContinue.Show();
+            }
+
+            else
+            {
+                UsernameLabel.Hide();
+                UsernameBox.Hide();
+                UsernameContinue.Hide();
+            }
+        }
+
         protected void ShowConnecting(bool Show = true)
         {
             if (Show)
@@ -494,6 +547,7 @@ namespace SnakeOnline
                     ShowMenu(false);
                     ShowNetworkedSessionMenu(false);
                     ShowHighscores(false);
+                    ShowUsernameMenu(false);
                     ShowConnecting(false);
                     break;
                 case Screen.Menu:
@@ -501,6 +555,7 @@ namespace SnakeOnline
                     ShowMenu(true);
                     ShowNetworkedSessionMenu(false);
                     ShowHighscores(false);
+                    ShowUsernameMenu(false);
                     ShowConnecting(false);
                     break;
                 case Screen.NetworkedSessionMenu:
@@ -508,6 +563,7 @@ namespace SnakeOnline
                     ShowMenu(false);
                     ShowNetworkedSessionMenu(true);
                     ShowHighscores(false);
+                    ShowUsernameMenu(false);
                     ShowConnecting(false);
                     break;
                 case Screen.Highscores:
@@ -515,6 +571,15 @@ namespace SnakeOnline
                     ShowMenu(false);
                     ShowNetworkedSessionMenu(false);
                     ShowHighscores(true);
+                    ShowUsernameMenu(false);
+                    ShowConnecting(false);
+                    break;
+                case Screen.UsernameMenu:
+                    ShowGame(false);
+                    ShowMenu(false);
+                    ShowNetworkedSessionMenu(false);
+                    ShowHighscores(false);
+                    ShowUsernameMenu(true);
                     ShowConnecting(false);
                     break;
                 case Screen.Connecting:
@@ -522,6 +587,7 @@ namespace SnakeOnline
                     ShowMenu(false);
                     ShowNetworkedSessionMenu(false);
                     ShowHighscores(false);
+                    ShowUsernameMenu(false);
                     ShowConnecting(true);
                     break;
             }
