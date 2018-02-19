@@ -153,59 +153,57 @@ namespace SnakeOnlineServer
                 Console.WriteLine("Client Requested Highscores At: " + ClientEndPoint.Address + ':' + ClientEndPoint.Port);
 
                 TrackedArgs.Client.Send(EntriesBuffer);
-
-                return;
             }
 
-            if (ReceivedString.Substring(0, 5) != "NAME:")
+            else if (ReceivedString.Substring(0, 5) != "NAME:")
             {
                 Console.WriteLine("Received Malformed Data");
-
-                return;
             }
 
-            string NameSearch = ReceivedString.Substring(5);
-            int Position = 0;
-
-            for (int Iter = 0; Iter < NameSearch.Length; ++Iter)
+            else
             {
-                if (NameSearch[Iter] == '|')
+                string NameSearch = ReceivedString.Substring(5);
+                int Position = 0;
+
+                for (int Iter = 0; Iter < NameSearch.Length; ++Iter)
                 {
-                    Position = Iter;
+                    if (NameSearch[Iter] == '|')
+                    {
+                        Position = Iter;
+                    }
+                }
+
+                if (Position == 0)
+                {
+                    Console.WriteLine("Received Malformed Data");
+                }
+
+                else
+                {
+                    string Name = NameSearch.Substring(0, Position);
+
+                    int Score = Convert.ToInt32(NameSearch.Substring(Position + 7));
+                    if (Score != 0)
+                    {
+                        Console.WriteLine("Client Submitted Score At: " + ClientEndPoint.Address + ':' + ClientEndPoint.Port);
+
+                        string Entry = Name + '|' + Score + "\n";
+
+                        bool AquiredLock = new bool();
+                        Lock.Enter(ref AquiredLock);
+
+                        long EOF = ScoreDatabase.Length;
+                        ScoreDatabase.Seek(EOF, SeekOrigin.Begin);
+                        ScoreWriter.WriteLine(Entry);
+                        ScoreWriter.Flush();
+                        //ScoreDatabase.Flush();
+
+                        Lock.Exit();
+
+                        NewData = true;
+                    }
                 }
             }
-
-            if (Position == 0)
-            {
-                Console.WriteLine("Received Malformed Data");
-
-                return;
-            }
-
-            string Name = NameSearch.Substring(0, Position);
-
-            int Score = Convert.ToInt32(NameSearch.Substring(Position + 7));
-            if (Score == 0)
-            {
-                return;
-            }
-
-            Console.WriteLine("Client Submitted Score At: " + ClientEndPoint.Address + ':' + ClientEndPoint.Port);
-
-            string Entry = Name + '|' + Score;
-
-            bool AquiredLock = new bool();
-            Lock.Enter(ref AquiredLock);
-
-            long EOF = ScoreDatabase.Length;
-            ScoreDatabase.Seek(EOF, SeekOrigin.Begin);
-            ScoreWriter.WriteLine(Entry);
-            ScoreWriter.Flush();
-            //ScoreDatabase.Flush();
-
-            Lock.Exit();
-
-            NewData = true;
 
             // Reset Receiving on this Socket.
             SocketTrackedAsyncArgs AsyncArgs = new SocketTrackedAsyncArgs();
