@@ -360,7 +360,9 @@ namespace SnakeOnline
         private void SetupUsernameMenu()
         {
             UsernameLabel = new Gwen.Control.Label(BaseCanvas);
-            UsernameLabel.SetText("Enter Desired Username:" + "\n(This is how your score will be represented in the Highscores page.)");
+            UsernameLabel.SetText("Enter Desired Username" +
+                "\n(This is how your score will be represented in the Highscores page.)" +
+                "\n(Name must be between 1 and 16 characters, and be ASCII encodable.(0-9, a-Z))");
             UsernameLabel.AutoSizeToContents = true;
             UsernameLabel.SetPosition(300, 150);
 
@@ -374,7 +376,7 @@ namespace SnakeOnline
             UsernameContinue.SetPosition(300, 260);
             UsernameContinue.Clicked += (B, Args) =>
             {
-                if (UsernameBox.Text != "")
+                if (UsernameBox.Text != "" && UsernameBox.Text.Length <= 16)
                 {
                     ActiveScreen = Screen.Menu;
                 }
