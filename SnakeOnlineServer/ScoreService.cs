@@ -221,6 +221,8 @@ namespace SnakeOnlineServer
                 bool AquiredLock = new bool();
                 Lock.Enter(ref AquiredLock);
 
+                Console.WriteLine("Flushing...");
+
                 ScoreDatabase.Flush();
 
                 Lock.Exit();
