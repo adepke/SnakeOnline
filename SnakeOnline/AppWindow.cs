@@ -341,11 +341,11 @@ namespace SnakeOnline
             TopScoresLabel = new Gwen.Control.Label(BaseCanvas);
             TopScoresLabel.SetText("Highscores");
             TopScoresLabel.SetSize(100, 50);
-            TopScoresLabel.SetPosition(200, 50);
+            TopScoresLabel.SetPosition(250, 50);
 
             TopScoresList = new Gwen.Control.ListBox(BaseCanvas);
-            TopScoresList.SetSize(250, 300);
-            TopScoresList.SetPosition(200, 70);
+            TopScoresList.SetSize(220, 210);
+            TopScoresList.SetPosition(180, 70);
 
             TopScoresBackButton = new Gwen.Control.Button(BaseCanvas);
             TopScoresBackButton.SetText("Back");
@@ -421,7 +421,14 @@ namespace SnakeOnline
             {
                 for (int Iter = 0; Iter < Highscores.Count; ++Iter)
                 {
-                    TopScoresList.AddRow(Highscores[Iter].Name + "      -      " + Highscores[Iter].Score);
+                    StringBuilder SpacerBuilder = new StringBuilder();
+
+                    for (int SpacerIter = 0; SpacerIter < 20 - Highscores[Iter].Name.Length; ++SpacerIter)
+                    {
+                        SpacerBuilder.Append("  ");
+                    }
+
+                    TopScoresList.AddRow(Highscores[Iter].Name + SpacerBuilder.ToString() + "-          " + Highscores[Iter].Score);
                 }
             }
         }
